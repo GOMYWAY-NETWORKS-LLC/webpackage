@@ -17,7 +17,7 @@ other ways described in the appendices.
        These signatures contain countermeasures against downgrade and
 protocol-confusion attacks. 
     " name="description">
-<meta content="xml2rfc 2.47.0" name="generator">
+<meta content="xml2rfc 3.0.0" name="generator">
 <meta content="draft-yasskin-http-origin-signed-responses-latest" name="ietf.draft">
 <link href="draft-yasskin-http-origin-signed-responses.xml" rel="alternate" type="application/rfc+xml">
 <link href="#copyright" rel="license">
@@ -139,7 +139,7 @@ svg {
 /* lists */
 ol, ul {
   padding: 0;
-  margin: 0 0 1em 2em;
+  margin: 0 0 0.5em 2em;
 }
 ol ol, ul ul, ol ul, ul ol {
   margin-left: 1em;
@@ -312,7 +312,7 @@ thead+tbody > tr:nth-child(2n+1) > td {
 }
 table caption {
   margin: 0;
-  padding: 3px 1em;
+  padding: 3px 0 3px 1em;
 }
 table p {
   margin: 0;
@@ -800,18 +800,18 @@ address div.right {
   font-size: 0.9em;
 }
 </style>
-<link href="rfc-local.css" rel="stylesheet" type="text/css">
+
 </head>
 <body>
 <table class="ears">
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">Signed HTTP Exchanges</td>
-<td class="right">August 2020</td>
+<td class="right">September 2020</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Yasskin</td>
-<td class="center">Expires 3 March 2021</td>
+<td class="center">Expires March 8, 2021</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -824,12 +824,12 @@ address div.right {
 <dd class="internet-draft">draft-yasskin-http-origin-signed-responses-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2020-08-30" class="published">30 August 2020</time>
+<time datetime="2020-09-04" class="published">September 4, 2020</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2021-03-03">3 March 2021</time></dd>
+<dd class="expires"><time datetime="2021-03-08">March 8, 2021</time></dd>
 <dt class="label-authors">Author:</dt>
 <dd class="authors">
 <div class="author">
@@ -881,7 +881,7 @@ in <a href="https://github.com/WICG/webpackage">https://github.com/WICG/webpacka
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 3 March 2021.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on March 8, 2021.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1277,7 +1277,7 @@ to standardize on their own.<a href="#section-1-3" class="pilcrow">¶</a></p>
       </h2>
 <span class="break"></span><dl class="dlParallel" id="section-2-1">
         <dt id="section-2-1.1">Absolute URL</dt>
-        <dd id="section-2-1.2">
+        <dd style="margin-left: 1.5em" id="section-2-1.2">
   A string for which the <a href="https://url.spec.whatwg.org/#concept-url-parser">URL
  parser</a> (<span>[<a href="#URL" class="xref">URL</a>]</span>), when run
  without a base URL, returns a URL rather than a failure, and for which that URL
@@ -1287,20 +1287,20 @@ to standardize on their own.<a href="#section-1-3" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
 <dt id="section-2-1.3">Author</dt>
-        <dd id="section-2-1.4">
+        <dd style="margin-left: 1.5em" id="section-2-1.4">
   The entity that wrote the content in a particular resource. This specification
 deals with publishers rather than authors.<a href="#section-2-1.4" class="pilcrow">¶</a>
 </dd>
         <dd class="break"></dd>
 <dt id="section-2-1.5">Publisher</dt>
-        <dd id="section-2-1.6">
+        <dd style="margin-left: 1.5em" id="section-2-1.6">
   The entity that controls the server for a particular origin <span>[<a href="#RFC6454" class="xref">RFC6454</a>]</span>. The
 publisher can get a CA to issue certificates for their private keys and can
 run a TLS server for their origin.<a href="#section-2-1.6" class="pilcrow">¶</a>
 </dd>
         <dd class="break"></dd>
 <dt id="section-2-1.7">Exchange (noun)</dt>
-        <dd id="section-2-1.8">
+        <dd style="margin-left: 1.5em" id="section-2-1.8">
   An HTTP request URL, content negotiation information, and an HTTP response.
 This can be encoded into a request message from a client with its matching
 response from a server, into the request in a PUSH_PROMISE with its matching
@@ -1312,19 +1312,19 @@ information is embedded into HTTP request headers.<a href="#section-2-1.8" class
 </dd>
         <dd class="break"></dd>
 <dt id="section-2-1.9">Intermediate</dt>
-        <dd id="section-2-1.10">
+        <dd style="margin-left: 1.5em" id="section-2-1.10">
   An entity that fetches signed HTTP exchanges from a publisher or another
 intermediate and forwards them to another intermediate or a client.<a href="#section-2-1.10" class="pilcrow">¶</a>
 </dd>
         <dd class="break"></dd>
 <dt id="section-2-1.11">Client</dt>
-        <dd id="section-2-1.12">
+        <dd style="margin-left: 1.5em" id="section-2-1.12">
   An entity that uses a signed HTTP exchange and needs to be able to prove that
 the publisher vouched for it as coming from its claimed origin.<a href="#section-2-1.12" class="pilcrow">¶</a>
 </dd>
         <dd class="break"></dd>
 <dt id="section-2-1.13">Unix time</dt>
-        <dd id="section-2-1.14">
+        <dd style="margin-left: 1.5em" id="section-2-1.14">
   Defined by <span>[<a href="#POSIX" class="xref">POSIX</a>]</span> <a href="http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap04.html#tag_04_16">section
 4.16</a>.<a href="#section-2-1.14" class="pilcrow">¶</a>
 </dd>
@@ -1383,14 +1383,14 @@ likely to change soon; see <a href="#parameterised-binary" class="xref">Section 
 MUST have the following values:<a href="#section-3.1-4" class="pilcrow">¶</a></p>
 <span class="break"></span><dl class="dlParallel" id="section-3.1-5">
           <dt id="section-3.1-5.1">"sig"</dt>
-          <dd id="section-3.1-5.2">
+          <dd style="margin-left: 1.5em" id="section-3.1-5.2">
   Byte sequence (Section 3.10 of <span>[<a href="#I-D.ietf-httpbis-header-structure" class="xref">I-D.ietf-httpbis-header-structure</a>]</span>) holding
 the signature of most of these parameters and the exchange's URL and response
 headers.<a href="#section-3.1-5.2" class="pilcrow">¶</a>
 </dd>
           <dd class="break"></dd>
 <dt id="section-3.1-5.3">"integrity"</dt>
-          <dd id="section-3.1-5.4">
+          <dd style="margin-left: 1.5em" id="section-3.1-5.4">
   A string (Section 3.8 of <span>[<a href="#I-D.ietf-httpbis-header-structure" class="xref">I-D.ietf-httpbis-header-structure</a>]</span>) containing a
 "/"-separated sequence of names starting with the lowercase name of the
 response header field that guards the response payload's integrity. The
@@ -1400,25 +1400,25 @@ algorithm that guards the payload's integrity.<a href="#section-3.1-5.4" class="
 </dd>
           <dd class="break"></dd>
 <dt id="section-3.1-5.5">"cert-url"</dt>
-          <dd id="section-3.1-5.6">
+          <dd style="margin-left: 1.5em" id="section-3.1-5.6">
   A string (Section 3.8 of <span>[<a href="#I-D.ietf-httpbis-header-structure" class="xref">I-D.ietf-httpbis-header-structure</a>]</span>) containing an
 absolute URL (<a href="#terminology" class="xref">Section 2</a>) with a scheme of "https" or "data".<a href="#section-3.1-5.6" class="pilcrow">¶</a>
 </dd>
           <dd class="break"></dd>
 <dt id="section-3.1-5.7">"cert-sha256"</dt>
-          <dd id="section-3.1-5.8">
+          <dd style="margin-left: 1.5em" id="section-3.1-5.8">
   Byte sequence (Section 3.10 of <span>[<a href="#I-D.ietf-httpbis-header-structure" class="xref">I-D.ietf-httpbis-header-structure</a>]</span>) holding
 the SHA-256 hash of the first certificate found at "cert-url".<a href="#section-3.1-5.8" class="pilcrow">¶</a>
 </dd>
           <dd class="break"></dd>
 <dt id="section-3.1-5.9">"ed25519key"</dt>
-          <dd id="section-3.1-5.10">
+          <dd style="margin-left: 1.5em" id="section-3.1-5.10">
   Byte sequence (Section 3.10 of <span>[<a href="#I-D.ietf-httpbis-header-structure" class="xref">I-D.ietf-httpbis-header-structure</a>]</span>) holding
 an Ed25519 public key (<span>[<a href="#RFC8032" class="xref">RFC8032</a>]</span>).<a href="#section-3.1-5.10" class="pilcrow">¶</a>
 </dd>
           <dd class="break"></dd>
 <dt id="section-3.1-5.11">"validity-url"</dt>
-          <dd id="section-3.1-5.12">
+          <dd id="section-3.1-5.12" style="margin-left: 1.5em">
 <div id="signature-validityurl">
   A string (Section 3.8 of <span>[<a href="#I-D.ietf-httpbis-header-structure" class="xref">I-D.ietf-httpbis-header-structure</a>]</span>) containing an
 absolute URL (<a href="#terminology" class="xref">Section 2</a>) with a scheme of "https".<a href="#signature-validityurl" class="pilcrow">¶</a>
@@ -1426,7 +1426,7 @@ absolute URL (<a href="#terminology" class="xref">Section 2</a>) with a scheme o
           </dd>
 <dd class="break"></dd>
 <dt id="section-3.1-5.13">"date" and "expires"</dt>
-          <dd id="section-3.1-5.14">
+          <dd style="margin-left: 1.5em" id="section-3.1-5.14">
   An integer (Section 3.6 of <span>[<a href="#I-D.ietf-httpbis-header-structure" class="xref">I-D.ietf-httpbis-header-structure</a>]</span>)
 representing a Unix time.<a href="#section-3.1-5.14" class="pilcrow">¶</a>
 </dd>
@@ -1600,7 +1600,7 @@ augmented-certificate = {
 certificate, and the client will attempt to build a path (<span>[<a href="#RFC5280" class="xref">RFC5280</a>]</span>) to it
 from a trusted root using the other certificates in the chain.<a href="#section-3.3-3" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="section-3.3-4">
-          <li id="section-3.3-4.1">Each <code>cert</code> value MUST be a DER-encoded X.509v3 certificate (<span>[<a href="#RFC5280" class="xref">RFC5280</a>]</span>).
+<li id="section-3.3-4.1">Each <code>cert</code> value MUST be a DER-encoded X.509v3 certificate (<span>[<a href="#RFC5280" class="xref">RFC5280</a>]</span>).
 Other key/value pairs in the same array item define properties of this
 certificate.<a href="#section-3.3-4.1" class="pilcrow">¶</a>
 </li>
@@ -1615,7 +1615,7 @@ response for that certificate (using the ASN.1 type <code>OCSPResponse</code> de
         </ol>
 <p id="section-3.3-5">Loading a <code>cert-url</code> takes a <code>forceFetch</code> flag. The client MUST:<a href="#section-3.3-5" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="section-3.3-6">
-          <li id="section-3.3-6.1">Let <code>raw-chain</code> be the result of fetching (<span>[<a href="#FETCH" class="xref">FETCH</a>]</span>) <code>cert-url</code>. If
+<li id="section-3.3-6.1">Let <code>raw-chain</code> be the result of fetching (<span>[<a href="#FETCH" class="xref">FETCH</a>]</span>) <code>cert-url</code>. If
 <code>forceFetch</code> is <em>not</em> set, the fetch can be fulfilled from a cache using
 normal HTTP semantics <span>[<a href="#RFC7234" class="xref">RFC7234</a>]</span>. If this fetch fails, return
 "invalid".<a href="#section-3.3-6.1" class="pilcrow">¶</a>
@@ -1650,7 +1650,7 @@ possible encoding.<a href="#section-3.4-2.1" class="pilcrow">¶</a>
             <p id="section-3.4-2.3.1">The keys in every map MUST be sorted in the bytewise lexicographic order of
 their canonical encodings. For example, the following keys are correctly sorted:<a href="#section-3.4-2.3.1" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="section-3.4-2.3.2">
-              <li id="section-3.4-2.3.2.1">10, encoded as 0A.<a href="#section-3.4-2.3.2.1" class="pilcrow">¶</a>
+<li id="section-3.4-2.3.2.1">10, encoded as 0A.<a href="#section-3.4-2.3.2.1" class="pilcrow">¶</a>
 </li>
               <li id="section-3.4-2.3.2.2">100, encoded as 18 64.<a href="#section-3.4-2.3.2.2" class="pilcrow">¶</a>
 </li>
@@ -1718,7 +1718,7 @@ actually invalid due to an expired OCSP response MAY retry with <code>forceFetch
 to retrieve an updated OCSP from the original server.<a href="#section-3.5-6" class="pilcrow">¶</a></p>
 </div>
 <ol start="1" type="1" class="normal type-1" id="section-3.5-7">
-          <li id="section-3.5-7.1">
+<li id="section-3.5-7.1">
             <p id="section-3.5-7.1.1">Let:<a href="#section-3.5-7.1.1" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-3.5-7.1.2.1">
@@ -1752,10 +1752,10 @@ time.<a href="#section-3.5-7.1.2.8" class="pilcrow">¶</a>
           <li id="section-3.5-7.2">
             <p id="section-3.5-7.2.1">Set <code>publicKey</code> and <code>signing-alg</code> depending on which key fields are present:<a href="#section-3.5-7.2.1" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="section-3.5-7.2.2">
-              <li id="section-3.5-7.2.2.1">
+<li id="section-3.5-7.2.2.1">
                 <p id="section-3.5-7.2.2.1.1">If <code>cert-url</code> is present:<a href="#section-3.5-7.2.2.1.1" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="section-3.5-7.2.2.1.2">
-                  <li id="section-3.5-7.2.2.1.2.1">Let <code>certificate-chain</code> be the result of loading the certificate chain
+<li id="section-3.5-7.2.2.1.2.1">Let <code>certificate-chain</code> be the result of loading the certificate chain
 at <code>cert-url</code> passing the <code>forceFetch</code> flag (<a href="#cert-chain-format" class="xref">Section 3.3</a>). If
 this returns "invalid", return "invalid".<a href="#section-3.5-7.2.2.1.2.1" class="pilcrow">¶</a>
 </li>
@@ -1792,7 +1792,7 @@ matches the <span>[<a href="#RFC8446" class="xref">RFC8446</a>]</span> format to
 anyone uses the same key in a TLS certificate and an exchange-signing
 certificate.<a href="#section-3.5-7.5.1" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="section-3.5-7.5.2">
-              <li id="section-3.5-7.5.2.1">A string that consists of octet 32 (0x20) repeated 64 times.<a href="#section-3.5-7.5.2.1" class="pilcrow">¶</a>
+<li id="section-3.5-7.5.2.1">A string that consists of octet 32 (0x20) repeated 64 times.<a href="#section-3.5-7.5.2.1" class="pilcrow">¶</a>
 </li>
               <li id="section-3.5-7.5.2.2">
                 <p id="section-3.5-7.5.2.2.1">A context string: the ASCII encoding of "HTTP Exchange 1".<a href="#section-3.5-7.5.2.2.1" class="pilcrow">¶</a></p>
@@ -2190,7 +2190,7 @@ to the instructions in <a href="#signature-validity" class="xref">Section 3.5</a
 for each signature, stopping at the first one that returns "valid". If any
 signature returns "valid", return "valid". Otherwise, return "invalid".<a href="#section-4-3" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="section-4-4">
-        <li id="section-4-4.1">If the signature's <span><a href="#signature-validityurl" class="xref">"validity-url" parameter</a> (<a href="#signature-validityurl" class="xref">Section 3.1</a>)</span> is not
+<li id="section-4-4.1">If the signature's <span><a href="#signature-validityurl" class="xref">"validity-url" parameter</a> (<a href="#signature-validityurl" class="xref">Section 3.1</a>)</span> is not
 <a href="https://html.spec.whatwg.org/multipage/origin.html#same-origin">same-origin</a>
 with <code>requestUrl</code>, return "invalid".<a href="#section-4-4.1" class="pilcrow">¶</a>
 </li>
@@ -2216,7 +2216,7 @@ fail, re-run <a href="#signature-validity" class="xref">Section 3.5</a> once ove
 <code>forceFetch</code> flag set, and restart from step 2. If a substep fails again,
 return "invalid".<a href="#section-4-4.7.1" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="section-4-4.7.2">
-            <li id="section-4-4.7.2.1">Use <code>certificate-chain</code> to validate that its first entry,
+<li id="section-4-4.7.2.1">Use <code>certificate-chain</code> to validate that its first entry,
 <code>main-certificate</code> is trusted as <code>authority</code>'s server certificate
 (<span>[<a href="#RFC5280" class="xref">RFC5280</a>]</span> and other undocumented conventions). Let <code>path</code> be the path
 that was used from the <code>main-certificate</code> to a trusted root, including the
@@ -2377,7 +2377,7 @@ days.<a href="#section-4.2-7" class="pilcrow">¶</a></p>
 <p id="section-4.2-9">A conforming CA MUST NOT issue certificates with this extension unless, for each
 dNSName in the subjectAltName extension of the certificate to be issued:<a href="#section-4.2-9" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="section-4.2-10">
-          <li id="section-4.2-10.1">An "issue" or "issuewild" CAA property (<span>[<a href="#RFC6844" class="xref">RFC6844</a>]</span>) exists that authorizes
+<li id="section-4.2-10.1">An "issue" or "issuewild" CAA property (<span>[<a href="#RFC6844" class="xref">RFC6844</a>]</span>) exists that authorizes
 the CA to issue the certificate; and<a href="#section-4.2-10.1" class="pilcrow">¶</a>
 </li>
           <li id="section-4.2-10.2">The "cansignhttpexchanges" parameter (<a href="#caa-cansignhttpexchanges" class="xref">Section 4.2.1</a>) is
@@ -2588,7 +2588,7 @@ Section 8.2 of <span>[<a href="#RFC7540" class="xref">RFC7540</a>]</span>, unles
 <p id="section-5.2.3-2">Instead, the client MUST validate such a PUSH_PROMISE and its response against
 the following list:<a href="#section-5.2.3-2" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="section-5.2.3-3">
-            <li id="section-5.2.3-3.1">If the PUSH_PROMISE includes any non-pseudo request header fields, the client
+<li id="section-5.2.3-3.1">If the PUSH_PROMISE includes any non-pseudo request header fields, the client
 MUST treat it as a stream error (Section 5.4.2 of <span>[<a href="#RFC7540" class="xref">RFC7540</a>]</span>) of type
 PROTOCOL_ERROR.<a href="#section-5.2.3-3.1" class="pilcrow">¶</a>
 </li>
@@ -2651,7 +2651,7 @@ content sniffing vulnerabilities (<a href="#seccons-content-sniffing" class="xre
         </ul>
 <p id="section-5.3-4">This content type consists of the concatenation of the following items:<a href="#section-5.3-4" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="section-5.3-5">
-          <li id="section-5.3-5.1">
+<li id="section-5.3-5.1">
             <p id="section-5.3-5.1.1">8 bytes consisting of the ASCII characters "sxg1" followed by 4 0x00 bytes,
 to serve as a file signature. This is redundant with the MIME type, and
 recipients that receive both MUST check that they match and stop parsing if
@@ -2764,7 +2764,7 @@ authentication status into signatures instead of signing by default.<a href="#se
 <p id="section-6.1-2">Signing systems SHOULD also incorporate the following mitigations to reduce the
 risk that private responses are signed:<a href="#section-6.1-2" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="section-6.1-3">
-          <li id="section-6.1-3.1">Strip the <code>Cookie</code> request header field and other identifying information
+<li id="section-6.1-3.1">Strip the <code>Cookie</code> request header field and other identifying information
 like client authentication and TLS session IDs from requests whose exchange
 is destined to be signed, before forwarding the request to a backend.<a href="#section-6.1-3.1" class="pilcrow">¶</a>
 </li>
@@ -2987,7 +2987,7 @@ attacker could use to cause these plugins to sniff a bad content type.<a href="#
 safe for that domain to serve the SXG's content directly, and to follow at least
 one of the following strategies:<a href="#section-6.8-3" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="section-6.8-4">
-          <li id="section-6.8-4.1">Only serve signed exchanges from dedicated domains that don't have access to
+<li id="section-6.8-4.1">Only serve signed exchanges from dedicated domains that don't have access to
 sensitive cookies or user storage.<a href="#section-6.8-4.1" class="pilcrow">¶</a>
 </li>
           <li id="section-6.8-4.2">Generate signed exchanges "offline", that is, in response to a trusted author
@@ -2997,7 +2997,7 @@ in response to untrusted-reader queries.<a href="#section-6.8-4.2" class="pilcro
           <li id="section-6.8-4.3">
             <p id="section-6.8-4.3.1">Do all of:<a href="#section-6.8-4.3.1" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="section-6.8-4.3.2">
-              <li id="section-6.8-4.3.2.1">If the SXG's fallback URL (<a href="#application-signed-exchange" class="xref">Section 5.3</a>) is derived
+<li id="section-6.8-4.3.2.1">If the SXG's fallback URL (<a href="#application-signed-exchange" class="xref">Section 5.3</a>) is derived
 from the request URL,
 <a href="https://url.spec.whatwg.org/#percent-encode">percent-encode</a> (<span>[<a href="#URL" class="xref">URL</a>]</span>)
 any bytes that are greater than 0x7E or are not <a href="https://url.spec.whatwg.org/#url-code-points">URL code
@@ -3074,7 +3074,7 @@ the distributor's cookies or because the source stashes an encoded user ID into
 either the request's path or a subdomain, the distributor has a few ways to
 pass that user ID on to the publisher that signed the page:<a href="#section-7.2-1" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="section-7.2-2">
-          <li id="section-7.2-2.1">If the distributor has the publisher's signing keys, it can sign a new page
+<li id="section-7.2-2.1">If the distributor has the publisher's signing keys, it can sign a new page
 with its user ID directly embedded.<a href="#section-7.2-2.1" class="pilcrow">¶</a>
 </li>
           <li id="section-7.2-2.2">Otherwise, the publisher can sign lots of copies of their package, and the
@@ -3271,19 +3271,19 @@ CBOR-format certificate chains, application/cert-chain+cbor, as follows:<a href=
 <dd class="break"></dd>
 <dt id="FETCH">[FETCH]</dt>
         <dd>
-<span class="refAuthor">WHATWG</span>, <span class="refTitle">"Fetch"</span>, <time datetime="2020-08" class="refDate">August 2020</time>, <span>&lt;<a href="https://fetch.spec.whatwg.org/">https://fetch.spec.whatwg.org/</a>&gt;</span>. </dd>
+<span class="refAuthor">WHATWG</span>, <span class="refTitle">"Fetch"</span>, <time datetime="2020-09" class="refDate">September 2020</time>, <span>&lt;<a href="https://fetch.spec.whatwg.org/">https://fetch.spec.whatwg.org/</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="I-D.ietf-httpbis-header-structure">[I-D.ietf-httpbis-header-structure]</dt>
         <dd>
-<span class="refAuthor">Nottingham, M.</span><span class="refAuthor"> and P. Kamp</span>, <span class="refTitle">"Structured Field Values for HTTP"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-httpbis-header-structure-19</span>, <time datetime="2020-06-03" class="refDate">3 June 2020</time>, <span>&lt;<a href="http://www.ietf.org/internet-drafts/draft-ietf-httpbis-header-structure-19.txt">http://www.ietf.org/internet-drafts/draft-ietf-httpbis-header-structure-19.txt</a>&gt;</span>. </dd>
+<span class="refAuthor">Nottingham, M.</span><span class="refAuthor"> and P. Kamp</span>, <span class="refTitle">"Structured Field Values for HTTP"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-httpbis-header-structure-19</span>, <time datetime="2020-06-03" class="refDate">June 3, 2020</time>, <span>&lt;<a href="http://www.ietf.org/internet-drafts/draft-ietf-httpbis-header-structure-19.txt">http://www.ietf.org/internet-drafts/draft-ietf-httpbis-header-structure-19.txt</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="I-D.ietf-httpbis-variants">[I-D.ietf-httpbis-variants]</dt>
         <dd>
-<span class="refAuthor">Nottingham, M.</span>, <span class="refTitle">"HTTP Representation Variants"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-httpbis-variants-06</span>, <time datetime="2019-11-03" class="refDate">3 November 2019</time>, <span>&lt;<a href="http://www.ietf.org/internet-drafts/draft-ietf-httpbis-variants-06.txt">http://www.ietf.org/internet-drafts/draft-ietf-httpbis-variants-06.txt</a>&gt;</span>. </dd>
+<span class="refAuthor">Nottingham, M.</span>, <span class="refTitle">"HTTP Representation Variants"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-httpbis-variants-06</span>, <time datetime="2019-11-03" class="refDate">November 3, 2019</time>, <span>&lt;<a href="http://www.ietf.org/internet-drafts/draft-ietf-httpbis-variants-06.txt">http://www.ietf.org/internet-drafts/draft-ietf-httpbis-variants-06.txt</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="I-D.thomson-http-mice">[I-D.thomson-http-mice]</dt>
         <dd>
-<span class="refAuthor">Thomson, M.</span><span class="refAuthor"> and J. Yasskin</span>, <span class="refTitle">"Merkle Integrity Content Encoding"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-thomson-http-mice-03</span>, <time datetime="2018-08-13" class="refDate">13 August 2018</time>, <span>&lt;<a href="http://www.ietf.org/internet-drafts/draft-thomson-http-mice-03.txt">http://www.ietf.org/internet-drafts/draft-thomson-http-mice-03.txt</a>&gt;</span>. </dd>
+<span class="refAuthor">Thomson, M.</span><span class="refAuthor"> and J. Yasskin</span>, <span class="refTitle">"Merkle Integrity Content Encoding"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-thomson-http-mice-03</span>, <time datetime="2018-08-13" class="refDate">August 13, 2018</time>, <span>&lt;<a href="http://www.ietf.org/internet-drafts/draft-thomson-http-mice-03.txt">http://www.ietf.org/internet-drafts/draft-thomson-http-mice-03.txt</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="IANA.media-types">[IANA.media-types]</dt>
         <dd>
@@ -3291,7 +3291,7 @@ CBOR-format certificate chains, application/cert-chain+cbor, as follows:<a href=
 <dd class="break"></dd>
 <dt id="POSIX">[POSIX]</dt>
         <dd>
-<span class="refAuthor">IEEE</span><span class="refAuthor"> and The Open Group</span>, <span class="refTitle">"The Open Group Base Specifications Issue 7"</span>, <span class="seriesInfo">value 1003.1-2008, 2016 Edition</span>, <span class="seriesInfo">name IEEE</span>, <time datetime="2016" class="refDate">2016</time>, <span>&lt;<a href="http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/">http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/</a>&gt;</span>. </dd>
+<span class="refAuthor">IEEE</span><span class="refAuthor"> and The Open Group</span>, <span class="refTitle">"The Open Group Base Specifications Issue 7"</span>, <span class="seriesInfo">name IEEE</span>, <span class="seriesInfo">value 1003.1-2008, 2016 Edition</span>, <time datetime="2016" class="refDate">2016</time>, <span>&lt;<a href="http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/">http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC2119">[RFC2119]</dt>
         <dd>
@@ -3359,7 +3359,7 @@ CBOR-format certificate chains, application/cert-chain+cbor, as follows:<a href=
 <dd class="break"></dd>
 <dt id="URL">[URL]</dt>
       <dd>
-<span class="refAuthor">WHATWG</span>, <span class="refTitle">"URL"</span>, <time datetime="2020-08" class="refDate">August 2020</time>, <span>&lt;<a href="https://url.spec.whatwg.org/">https://url.spec.whatwg.org/</a>&gt;</span>. </dd>
+<span class="refAuthor">WHATWG</span>, <span class="refTitle">"URL"</span>, <time datetime="2020-09" class="refDate">September 2020</time>, <span>&lt;<a href="https://url.spec.whatwg.org/">https://url.spec.whatwg.org/</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 </dl>
 </section>
@@ -3370,47 +3370,47 @@ CBOR-format certificate chains, application/cert-chain+cbor, as follows:<a href=
 <dl class="references">
 <dt id="BRs">[BRs]</dt>
         <dd>
-<span class="refAuthor">CA/Browser Forum</span>, <span class="refTitle">"Baseline Requirements for the Issuance and Management of Publicly-Trusted Certificates"</span>, <time datetime="2018-12-10" class="refDate">10 December 2018</time>, <span>&lt;<a href="https://cabforum.org/baseline-requirements-documents/">https://cabforum.org/baseline-requirements-documents/</a>&gt;</span>. </dd>
+<span class="refAuthor">CA/Browser Forum</span>, <span class="refTitle">"Baseline Requirements for the Issuance and Management of Publicly-Trusted Certificates"</span>, <time datetime="2018-12-10" class="refDate">December 10, 2018</time>, <span>&lt;<a href="https://cabforum.org/baseline-requirements-documents/">https://cabforum.org/baseline-requirements-documents/</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="CRLSets">[CRLSets]</dt>
         <dd>
-<span class="refAuthor">Langley, A.</span>, <span class="refTitle">"Revocation checking and Chrome's CRL"</span>, <time datetime="2012-02-05" class="refDate">5 February 2012</time>, <span>&lt;<a href="https://www.imperialviolet.org/2012/02/05/crlsets.html">https://www.imperialviolet.org/2012/02/05/crlsets.html</a>&gt;</span>. </dd>
+<span class="refAuthor">Langley, A.</span>, <span class="refTitle">"Revocation checking and Chrome's CRL"</span>, <time datetime="2012-02-05" class="refDate">February 5, 2012</time>, <span>&lt;<a href="https://www.imperialviolet.org/2012/02/05/crlsets.html">https://www.imperialviolet.org/2012/02/05/crlsets.html</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="I-D.bishop-httpbis-origin-fed-up">[I-D.bishop-httpbis-origin-fed-up]</dt>
         <dd>
-<span class="refAuthor">Bishop, M.</span><span class="refAuthor"> and E. Nygren</span>, <span class="refTitle">"DNS Security with HTTP/2 ORIGIN"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-bishop-httpbis-origin-fed-up-00</span>, <time datetime="2019-01-08" class="refDate">8 January 2019</time>, <span>&lt;<a href="http://www.ietf.org/internet-drafts/draft-bishop-httpbis-origin-fed-up-00.txt">http://www.ietf.org/internet-drafts/draft-bishop-httpbis-origin-fed-up-00.txt</a>&gt;</span>. </dd>
+<span class="refAuthor">Bishop, M.</span><span class="refAuthor"> and E. Nygren</span>, <span class="refTitle">"DNS Security with HTTP/2 ORIGIN"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-bishop-httpbis-origin-fed-up-00</span>, <time datetime="2019-01-08" class="refDate">January 8, 2019</time>, <span>&lt;<a href="http://www.ietf.org/internet-drafts/draft-bishop-httpbis-origin-fed-up-00.txt">http://www.ietf.org/internet-drafts/draft-bishop-httpbis-origin-fed-up-00.txt</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="I-D.burke-content-signature">[I-D.burke-content-signature]</dt>
         <dd>
-<span class="refAuthor">Burke, B.</span>, <span class="refTitle">"HTTP Header for digital signatures"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-burke-content-signature-00</span>, <time datetime="2011-03-07" class="refDate">7 March 2011</time>, <span>&lt;<a href="http://www.ietf.org/internet-drafts/draft-burke-content-signature-00.txt">http://www.ietf.org/internet-drafts/draft-burke-content-signature-00.txt</a>&gt;</span>. </dd>
+<span class="refAuthor">Burke, B.</span>, <span class="refTitle">"HTTP Header for digital signatures"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-burke-content-signature-00</span>, <time datetime="2011-03-07" class="refDate">March 7, 2011</time>, <span>&lt;<a href="http://www.ietf.org/internet-drafts/draft-burke-content-signature-00.txt">http://www.ietf.org/internet-drafts/draft-burke-content-signature-00.txt</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="I-D.cavage-http-signatures">[I-D.cavage-http-signatures]</dt>
         <dd>
-<span class="refAuthor">Cavage, M.</span><span class="refAuthor"> and M. Sporny</span>, <span class="refTitle">"Signing HTTP Messages"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-cavage-http-signatures-12</span>, <time datetime="2019-10-21" class="refDate">21 October 2019</time>, <span>&lt;<a href="http://www.ietf.org/internet-drafts/draft-cavage-http-signatures-12.txt">http://www.ietf.org/internet-drafts/draft-cavage-http-signatures-12.txt</a>&gt;</span>. </dd>
+<span class="refAuthor">Cavage, M.</span><span class="refAuthor"> and M. Sporny</span>, <span class="refTitle">"Signing HTTP Messages"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-cavage-http-signatures-12</span>, <time datetime="2019-10-21" class="refDate">October 21, 2019</time>, <span>&lt;<a href="http://www.ietf.org/internet-drafts/draft-cavage-http-signatures-12.txt">http://www.ietf.org/internet-drafts/draft-cavage-http-signatures-12.txt</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="I-D.ietf-httpbis-cache">[I-D.ietf-httpbis-cache]</dt>
         <dd>
-<span class="refAuthor">Fielding, R.</span><span class="refAuthor">, Nottingham, M.</span><span class="refAuthor">, and J. Reschke</span>, <span class="refTitle">"HTTP Caching"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-httpbis-cache-11</span>, <time datetime="2020-08-27" class="refDate">27 August 2020</time>, <span>&lt;<a href="http://www.ietf.org/internet-drafts/draft-ietf-httpbis-cache-11.txt">http://www.ietf.org/internet-drafts/draft-ietf-httpbis-cache-11.txt</a>&gt;</span>. </dd>
+<span class="refAuthor">Fielding, R.</span><span class="refAuthor">, Nottingham, M.</span><span class="refAuthor">, and J. Reschke</span>, <span class="refTitle">"HTTP Caching"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-httpbis-cache-11</span>, <time datetime="2020-08-27" class="refDate">August 27, 2020</time>, <span>&lt;<a href="http://www.ietf.org/internet-drafts/draft-ietf-httpbis-cache-11.txt">http://www.ietf.org/internet-drafts/draft-ietf-httpbis-cache-11.txt</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="I-D.ietf-httpbis-http2-secondary-certs">[I-D.ietf-httpbis-http2-secondary-certs]</dt>
         <dd>
-<span class="refAuthor">Bishop, M.</span><span class="refAuthor">, Sullivan, N.</span><span class="refAuthor">, and M. Thomson</span>, <span class="refTitle">"Secondary Certificate Authentication in HTTP/2"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-httpbis-http2-secondary-certs-06</span>, <time datetime="2020-05-14" class="refDate">14 May 2020</time>, <span>&lt;<a href="http://www.ietf.org/internet-drafts/draft-ietf-httpbis-http2-secondary-certs-06.txt">http://www.ietf.org/internet-drafts/draft-ietf-httpbis-http2-secondary-certs-06.txt</a>&gt;</span>. </dd>
+<span class="refAuthor">Bishop, M.</span><span class="refAuthor">, Sullivan, N.</span><span class="refAuthor">, and M. Thomson</span>, <span class="refTitle">"Secondary Certificate Authentication in HTTP/2"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-httpbis-http2-secondary-certs-06</span>, <time datetime="2020-05-14" class="refDate">May 14, 2020</time>, <span>&lt;<a href="http://www.ietf.org/internet-drafts/draft-ietf-httpbis-http2-secondary-certs-06.txt">http://www.ietf.org/internet-drafts/draft-ietf-httpbis-http2-secondary-certs-06.txt</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="I-D.thomson-http-content-signature">[I-D.thomson-http-content-signature]</dt>
         <dd>
-<span class="refAuthor">Thomson, M.</span>, <span class="refTitle">"Content-Signature Header Field for HTTP"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-thomson-http-content-signature-00</span>, <time datetime="2015-07-02" class="refDate">2 July 2015</time>, <span>&lt;<a href="http://www.ietf.org/internet-drafts/draft-thomson-http-content-signature-00.txt">http://www.ietf.org/internet-drafts/draft-thomson-http-content-signature-00.txt</a>&gt;</span>. </dd>
+<span class="refAuthor">Thomson, M.</span>, <span class="refTitle">"Content-Signature Header Field for HTTP"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-thomson-http-content-signature-00</span>, <time datetime="2015-07-02" class="refDate">July 2, 2015</time>, <span>&lt;<a href="http://www.ietf.org/internet-drafts/draft-thomson-http-content-signature-00.txt">http://www.ietf.org/internet-drafts/draft-thomson-http-content-signature-00.txt</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="I-D.yasskin-httpbis-origin-signed-exchanges-impl">[I-D.yasskin-httpbis-origin-signed-exchanges-impl]</dt>
         <dd>
-<span class="refAuthor">Yasskin, J.</span><span class="refAuthor"> and K. Ueno</span>, <span class="refTitle">"Signed HTTP Exchanges Implementation Checkpoints"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-yasskin-httpbis-origin-signed-exchanges-impl-03</span>, <time datetime="2019-07-25" class="refDate">25 July 2019</time>, <span>&lt;<a href="http://www.ietf.org/internet-drafts/draft-yasskin-httpbis-origin-signed-exchanges-impl-03.txt">http://www.ietf.org/internet-drafts/draft-yasskin-httpbis-origin-signed-exchanges-impl-03.txt</a>&gt;</span>. </dd>
+<span class="refAuthor">Yasskin, J.</span><span class="refAuthor"> and K. Ueno</span>, <span class="refTitle">"Signed HTTP Exchanges Implementation Checkpoints"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-yasskin-httpbis-origin-signed-exchanges-impl-03</span>, <time datetime="2019-07-25" class="refDate">July 25, 2019</time>, <span>&lt;<a href="http://www.ietf.org/internet-drafts/draft-yasskin-httpbis-origin-signed-exchanges-impl-03.txt">http://www.ietf.org/internet-drafts/draft-yasskin-httpbis-origin-signed-exchanges-impl-03.txt</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="I-D.yasskin-wpack-use-cases">[I-D.yasskin-wpack-use-cases]</dt>
         <dd>
-<span class="refAuthor">Yasskin, J.</span>, <span class="refTitle">"Use Cases and Requirements for Web Packages"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-yasskin-wpack-use-cases-01</span>, <time datetime="2020-07-27" class="refDate">27 July 2020</time>, <span>&lt;<a href="http://www.ietf.org/internet-drafts/draft-yasskin-wpack-use-cases-01.txt">http://www.ietf.org/internet-drafts/draft-yasskin-wpack-use-cases-01.txt</a>&gt;</span>. </dd>
+<span class="refAuthor">Yasskin, J.</span>, <span class="refTitle">"Use Cases and Requirements for Web Packages"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-yasskin-wpack-use-cases-01</span>, <time datetime="2020-07-27" class="refDate">July 27, 2020</time>, <span>&lt;<a href="http://www.ietf.org/internet-drafts/draft-yasskin-wpack-use-cases-01.txt">http://www.ietf.org/internet-drafts/draft-yasskin-wpack-use-cases-01.txt</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="OneCrl">[OneCrl]</dt>
         <dd>
-<span class="refAuthor">Goodwin, M.</span>, <span class="refTitle">"Revoking Intermediate Certificates: Introducing OneCRL"</span>, <time datetime="2015-03-03" class="refDate">3 March 2015</time>, <span>&lt;<a href="https://blog.mozilla.org/security/2015/03/03/revoking-intermediate-certificates-introducing-onecrl/">https://blog.mozilla.org/security/2015/03/03/revoking-intermediate-certificates-introducing-onecrl/</a>&gt;</span>. </dd>
+<span class="refAuthor">Goodwin, M.</span>, <span class="refTitle">"Revoking Intermediate Certificates: Introducing OneCRL"</span>, <time datetime="2015-03-03" class="refDate">March 3, 2015</time>, <span>&lt;<a href="https://blog.mozilla.org/security/2015/03/03/revoking-intermediate-certificates-introducing-onecrl/">https://blog.mozilla.org/security/2015/03/03/revoking-intermediate-certificates-introducing-onecrl/</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC2965">[RFC2965]</dt>
         <dd>
@@ -3466,15 +3466,15 @@ CBOR-format certificate chains, application/cert-chain+cbor, as follows:<a href=
 <dd class="break"></dd>
 <dt id="SRI">[SRI]</dt>
         <dd>
-<span class="refAuthor">Akhawe, D.</span><span class="refAuthor">, Braun, F.</span><span class="refAuthor">, Marier, F.</span><span class="refAuthor">, and J. Weinberger</span>, <span class="refTitle">"Subresource Integrity"</span>, <span class="seriesInfo">World Wide Web Consortium Recommendation REC-SRI-20160623</span>, <time datetime="2016-06-23" class="refDate">23 June 2016</time>, <span>&lt;<a href="https://www.w3.org/TR/2016/REC-SRI-20160623">https://www.w3.org/TR/2016/REC-SRI-20160623</a>&gt;</span>. </dd>
+<span class="refAuthor">Akhawe, D.</span><span class="refAuthor">, Braun, F.</span><span class="refAuthor">, Marier, F.</span><span class="refAuthor">, and J. Weinberger</span>, <span class="refTitle">"Subresource Integrity"</span>, <span class="seriesInfo">World Wide Web Consortium Recommendation REC-SRI-20160623</span>, <time datetime="2016-06-23" class="refDate">June 23, 2016</time>, <span>&lt;<a href="https://www.w3.org/TR/2016/REC-SRI-20160623">https://www.w3.org/TR/2016/REC-SRI-20160623</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="W3C.NOTE-OPS-OverHTTP">[W3C.NOTE-OPS-OverHTTP]</dt>
         <dd>
-<span class="refAuthor">Hensley, P.</span><span class="refAuthor">, Metral, M.</span><span class="refAuthor">, Shardanand, U.</span><span class="refAuthor">, Converse, D.</span><span class="refAuthor">, and M. Myers</span>, <span class="refTitle">"Implementation of OPS Over HTTP"</span>, <span class="seriesInfo">W3C NOTE NOTE-OPS-OverHTTP</span>, <time datetime="1997-06-02" class="refDate">2 June 1997</time>, <span>&lt;<a href="http://www.w3.org/TR/NOTE-OPS-OverHTTP">http://www.w3.org/TR/NOTE-OPS-OverHTTP</a>&gt;</span>. </dd>
+<span class="refAuthor">Hensley, P.</span><span class="refAuthor">, Metral, M.</span><span class="refAuthor">, Shardanand, U.</span><span class="refAuthor">, Converse, D.</span><span class="refAuthor">, and M. Myers</span>, <span class="refTitle">"Implementation of OPS Over HTTP"</span>, <span class="seriesInfo">W3C NOTE NOTE-OPS-OverHTTP</span>, <time datetime="1997-06-02" class="refDate">June 2, 1997</time>, <span>&lt;<a href="http://www.w3.org/TR/NOTE-OPS-OverHTTP">http://www.w3.org/TR/NOTE-OPS-OverHTTP</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="W3C.WD-clear-site-data-20171130">[W3C.WD-clear-site-data-20171130]</dt>
       <dd>
-<span class="refAuthor">West, M.</span>, <span class="refTitle">"Clear Site Data"</span>, <span class="seriesInfo">World Wide Web Consortium WD WD-clear-site-data-20171130</span>, <time datetime="2017-11-30" class="refDate">30 November 2017</time>, <span>&lt;<a href="https://www.w3.org/TR/2017/WD-clear-site-data-20171130">https://www.w3.org/TR/2017/WD-clear-site-data-20171130</a>&gt;</span>. </dd>
+<span class="refAuthor">West, M.</span>, <span class="refTitle">"Clear Site Data"</span>, <span class="seriesInfo">World Wide Web Consortium WD WD-clear-site-data-20171130</span>, <time datetime="2017-11-30" class="refDate">November 30, 2017</time>, <span>&lt;<a href="https://www.w3.org/TR/2017/WD-clear-site-data-20171130">https://www.w3.org/TR/2017/WD-clear-site-data-20171130</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 </dl>
 </section>
@@ -3630,7 +3630,7 @@ is to re-use the web PKI and CA ecosystem.<a href="#section-b.1-1" class="pilcro
           </h3>
 <p id="section-b.1.1-1">If we re-use existing TLS server certificates, we incur the risks that:<a href="#section-b.1.1-1" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="section-b.1.1-2">
-            <li id="section-b.1.1-2.1">TLS server certificates must be accessible from online servers, so they're
+<li id="section-b.1.1-2.1">TLS server certificates must be accessible from online servers, so they're
 easier to steal or use as signing oracles than an offline key. An exchange's
 signing key doesn't need to be online.<a href="#section-b.1.1-2.1" class="pilcrow">¶</a>
 </li>
@@ -3655,7 +3655,7 @@ new X.509 extension here is forbidden from being used in TLS servers. If
 <a href="#cross-origin-cert-req" class="xref">Section 4.2</a> changes to allow re-use in TLS servers, we would need
 to:<a href="#section-b.1.2-1" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="section-b.1.2-2">
-            <li id="section-b.1.2-2.1">Avoid key types that are used for non-TLS protocols whose output could be
+<li id="section-b.1.2-2.1">Avoid key types that are used for non-TLS protocols whose output could be
 confused with a signature. That may be just the <code>rsaEncryption</code> OID from
 <span>[<a href="#RFC8017" class="xref">RFC8017</a>]</span>.<a href="#section-b.1.2-2.1" class="pilcrow">¶</a>
 </li>
@@ -3785,7 +3785,7 @@ revocation, I expect the best option to be stapled "this version is still valid"
 assertions with short expiration times.<a href="#section-b.3.2-1" class="pilcrow">¶</a></p>
 <p id="section-b.3.2-2">These assertions could be structured as:<a href="#section-b.3.2-2" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="section-b.3.2-3">
-            <li id="section-b.3.2-3.1">A signed minimum version number or timestamp for a set of request headers:
+<li id="section-b.3.2-3.1">A signed minimum version number or timestamp for a set of request headers:
 This requires that signed responses need to include a version number or
 timestamp, but allows a server to provide a single signature covering all
 valid versions.<a href="#section-b.3.2-3.1" class="pilcrow">¶</a>
