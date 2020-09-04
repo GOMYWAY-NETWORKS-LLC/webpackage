@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2020-08-30T19:08:10.147138+00:00",
+  "timestamp": "2020-09-04T00:34:09.928855+00:00",
   "repo": "WICG/webpackage",
   "labels": [
     {
@@ -2485,7 +2485,7 @@
       "labels": [],
       "body": "While some packages need to be kept up to date, and expired when they become too old; there are also things that should never expire/change.\r\n\r\nFor example the content of a webpage a user wants to keep, a report or invoice created by a website, etc (this is instead of using a PDF or MS Word document).\r\n\r\nSo would it be possible to skip the Expires header, and have some way of marking the package as immutable?\r\n\r\nThat immutable flag could also instruct the browser to never download any resources, and for the JS `Date` object to return a date/time based on the Date header from the package (not the current date/time)... may be related to issue #104?",
       "createdAt": "2018-01-09T22:31:52Z",
-      "updatedAt": "2019-05-13T17:06:20Z",
+      "updatedAt": "2020-09-02T09:59:45Z",
       "closedAt": "2019-05-13T17:06:19Z",
       "comments": [
         {
@@ -2543,6 +2543,13 @@
           "body": "Closed by #137. ",
           "createdAt": "2019-05-13T17:06:19Z",
           "updatedAt": "2019-05-13T17:06:19Z"
+        },
+        {
+          "author": "craigfrancis",
+          "authorAssociation": "NONE",
+          "body": "[Issue 576](https://github.com/WICG/webpackage/issues/576) continues the discussion regarding disallowing network access for [unsigned bundles](https://github.com/WICG/webpackage/blob/master/explainers/navigation-to-unsigned-bundles.md).",
+          "createdAt": "2020-09-02T09:59:44Z",
+          "updatedAt": "2020-09-02T09:59:44Z"
         }
       ]
     },
@@ -7386,7 +7393,7 @@
       "labels": [],
       "body": "The thread at https://twitter.com/colinbendell/status/1129040437929492480 describes this attack. If the cache serves an SXG to the user, but leaves the connection open. According to the thread, this would allow it to learn the time until the user unloaded that document (e.g. clicked a link, closed the tab, etc.). Is this possible given the current spec / implementation snapshot? If so, is there a way to mitigate it?",
       "createdAt": "2019-05-19T20:28:21Z",
-      "updatedAt": "2019-05-21T00:57:52Z",
+      "updatedAt": "2020-09-02T16:26:25Z",
       "closedAt": null,
       "comments": [
         {
@@ -7409,6 +7416,20 @@
           "body": "I don\u2019t think Connection: Close will have the desired semantics, especially\nin the case of HTTP/2. And I\u2019m a bit apprehensive of having to change the\nfundamental networking implementation to accommodate if a connection has\nbeen tainted by an SXG loss - that sort of complexity discourages\nimplementation. Browser stacks don\u2019t have anything like that, even for slow\nconnections.\n\nAre there other options or ideas worth exploring?\n",
           "createdAt": "2019-05-21T00:57:51Z",
           "updatedAt": "2019-05-21T00:57:51Z"
+        },
+        {
+          "author": "martinthomson",
+          "authorAssociation": "NONE",
+          "body": "Browsers could dump the request on navigation.  That means dropping connections (HTTP/1.1) or aborting requests (HTTP/2 or /3).  Content that was acquired prior to the navigation might be loaded from the bundle; other content can be fetched as though anew.  This would remove any incentive for the cache to play this game.\r\n\r\nThe cost is that it makes partial loading of bundled content more wasteful.  Preemptive preloading is already pretty wasteful and this could make it worse by forcing partial loads to be abandoned.  It seems likely that navigation could happen during fetching bundles in a great many cases and you probably don't want to throw away the effort invested.  Progressive loading becomes more helpful.  You can at least get those resources that were all loaded, with some amount of waste (that might be tuneable).  Any partially fetched pieces would probably have to be re-fetched from the start, unless you had really good validators and range requests, but that assumes a level of coordination I wouldn't count on.",
+          "createdAt": "2020-09-02T06:35:16Z",
+          "updatedAt": "2020-09-02T06:35:16Z"
+        },
+        {
+          "author": "davidben",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I'm a little confused what the attack is. Is the assumption that the browser correlate closing the connection with unloading the document spawned from the SXG, and thus you can learn the linger time by observing the connection closure?\r\n\r\nI don't think that's an issue, at least not in Chrome's implementation. The socket pools have no idea when documents are unloaded, except indirectly from when subresource requests stop coming in (which could either be unload or the document has nothing more to load). But that doesn't matter here because, post storage partitioning, all those subresources would come from the destination's partition anyway. That means there isn't even a reason for the browser to correlate the SXG cache connection with the resulting document.",
+          "createdAt": "2020-09-02T16:25:31Z",
+          "updatedAt": "2020-09-02T16:26:25Z"
         }
       ]
     },
@@ -8517,7 +8538,7 @@
       ],
       "body": "Currently there is no enforced relationship between the URL used to look up resources in the package, and where the resource came from online.  Consistent URLs are an imperfect, but extremely useful signal for privacy protecting tools (filter lists, adblockers, disconnect, Firefox and Edge built in protections, safe browsing, etc.).  \r\n\r\nThe current proposal would allow for all WebPackage'd sites to circumvent all URL based tools by simply randomizing URLs as a post processing step in [amppackager](https://github.com/ampproject/amppackager) or similar.  This could even be done per-request per page.  Since URLs are effectively just indexes into the package (and not keys for decision making, caching, etc), they can be changed arbitrarily w/o affecting how the package loads, but preventing the URL-based privacy preserving tools from running.\r\n\r\nA (partial) possible solution to the problem is to play a [cut-and-choose](https://www.usenix.org/conference/usenixsecurity16/technical-sessions/presentation/zhu), commitment-auditing style games with the URLs.  At package time, the packager has to make commitments about which URL each resource came from, and the size, shape etc of the resource.  These can be made / mixed with the URL of the page being packaged. \r\n\r\nThe client can then, w/ some probability, audit some number of the URLs in the package.  If the commitments fail, deterring counter measures can be taken against the packing origin (e.g. global decaying block list of misbehaving packagers, etc).",
       "createdAt": "2020-01-28T21:18:35Z",
-      "updatedAt": "2020-08-30T18:26:07Z",
+      "updatedAt": "2020-09-01T16:17:32Z",
       "closedAt": null,
       "comments": [
         {
@@ -8722,6 +8743,48 @@
           "body": "Speculation about how this project is an evil plot belongs somewhere else. I'll reopen this issue tomorrow.\r\n\r\nTo the extent that sites have a local `giant-banner-ad-generator.js` today, instead of compiling it into the rest of their Javascript, they can equally well have a separate bundle for the ad-related things tomorrow. Doing so improves their user experience even for high-bandwidth users, since it improves caching and everyone's sensitive to loading latency.\r\n\r\nThe low-bandwidth/high-latency case is one of the [core use cases](https://wicg.github.io/webpackage/draft-yasskin-wpack-use-cases.html#name-offline-installation) for the overall web packaging project, but we need signing (or [adoption](https://martinthomson.github.io/wpack-content/draft-thomson-wpack-content-origin.html)) to let the local cache distribute trusted packages, in addition to the bundles discussed in this issue.",
           "createdAt": "2020-08-30T18:26:07Z",
           "updatedAt": "2020-08-30T18:26:07Z"
+        },
+        {
+          "author": "ron-wolf",
+          "authorAssociation": "NONE",
+          "body": "Thread is long as hell, so I haven\u2019t read it all; perhaps what I\u2019m about to say has already been addressed. All I\u2019ll say is I think there are other (possibly better) reasons to enforce single canonical resources for URLs, besides preserving ad-blocking functionality. In short: the scope of this issue is broader than its title suggests.\r\n\r\n@jyasskin, thanks for unlocking the issue! I hope the discussion will be thoughtful and civil.",
+          "createdAt": "2020-08-31T23:25:07Z",
+          "updatedAt": "2020-08-31T23:26:09Z"
+        },
+        {
+          "author": "jyasskin",
+          "authorAssociation": "MEMBER",
+          "body": "@ron-wolf I think this thread has focused on the use case of blocking resources, rather than other reasons to encourage resources to live at just one URL or for each URL to have just one representation. I think it'll be easier to discuss your other use case(s) in a new issue, just to prevent them from getting lost in the noise here. Could you elaborate what use cases you're hoping to preserve, and how you see bundles causing problems for those use cases?",
+          "createdAt": "2020-09-01T00:05:18Z",
+          "updatedAt": "2020-09-01T00:05:18Z"
+        },
+        {
+          "author": "KenjiBaheux",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@jyasskin would you mind filing a new issue to discuss the bandwidth / disable X use case brought up by @briankanderson and @kuro68k ? This feels different enough from the original issue.",
+          "createdAt": "2020-09-01T04:08:42Z",
+          "updatedAt": "2020-09-01T04:08:42Z"
+        },
+        {
+          "author": "jyasskin",
+          "authorAssociation": "MEMBER",
+          "body": "@KenjiBaheux Done: #594.",
+          "createdAt": "2020-09-01T04:23:05Z",
+          "updatedAt": "2020-09-01T04:23:05Z"
+        },
+        {
+          "author": "kuro68k",
+          "authorAssociation": "NONE",
+          "body": "@jyasskin I think anything which relies on the kindness of the site operator is a bad idea.\r\n\r\nWhile it is possible to inline JS ads it's unusual because of the way ad networks work and their desire for metrics.",
+          "createdAt": "2020-09-01T08:05:18Z",
+          "updatedAt": "2020-09-01T08:05:18Z"
+        },
+        {
+          "author": "ocumo",
+          "authorAssociation": "NONE",
+          "body": "I am a bit appalled.\r\n\r\nThe elephant in the room is the argument that because evil exists and thrives anyway despite costs or existing countermeasures, then the \"obvious\" solution would be to go ahead and make it the standard.\r\n\r\nIn other words: Because, say, theft will always happen, no matter what society does to prevent it, then society should make it legal, providing thiefs with a set of free and standard tools and means to commit the perfect crime. That way society saves the hassle of investigations, arresting, judging, etc.  On top of that, good citizens would also always find cool ways to use those tools too. Clever, huh?\r\n\r\nKind of akin the freedom of gun possession talk. Yeah, it'd be a cool thing to have brutally powerful automatic weapons cheaply available in the nearest news kiosk, bakery, or gas station.  I would love to have one, to shoot at cans and impress girls into what a wonderful and heroic male I am for mating. On the other hand, all kind of crooks, nuts, inferiority complex wackos and other psychosocial lunatics, perverts, criminals and troglodites would also love it. But not exacly to shoot at cans.\r\n\r\nI watch the news. There is a reason why God didn't give donkeys horns.\r\n\r\nAs a developer, I am extremely excited to use this extremely cool technology. I can't wait to learn the (soon-to-be?) \"new standard\".  And, boy, do I already have ideas of how to use it, dude!\r\n\r\nAs a responsible citizen and father, and as a simple user myself, I feel totally different, though.  The geek kid inside me can't convince the mature man that worries about a rare, dying concept: ethics. Society can't be all about technology and code details, without the faintest high level concerns about boundaries, purposes and consequences framing it.  Without that frame, all this is nothing but juvenile. Cool, but juvenile. Sorry.\r\n\r\nThat blurred and now very alien concept (\"ethics\") still matters to me, more than the excitement of debating geekie latency details or implementations of countermeasures against countermeasures of \"clever\" pieces of code.\r\n\r\nIn the contest of \"who is more clever\": the geek who wants to do a thing just because he can, vs. the geek who disagrees on details of the implementation, the winner is...\r\n\r\n...definitely not society or civil rights, let alone ethics, decency or intelligency itself.\r\n\r\nI trust that in Google there should certainly be senior management willing to look at this from high above the nuts and bolts, variables, arrays, classes, functions, if/then, semi-colons, O(N) and so forth, and give it a truly responsible thought, purpose and direction for the sake of the Internet for the Good of the Society.",
+          "createdAt": "2020-09-01T16:17:32Z",
+          "updatedAt": "2020-09-01T16:17:32Z"
         }
       ]
     },
@@ -8926,9 +8989,17 @@
       "labels": [],
       "body": "Reading this:\r\n\r\n![image](https://user-images.githubusercontent.com/1101339/80369842-39399f80-888f-11ea-9a9a-fe030b25772e.png)\r\n\r\nIt made me realize that Google Play is currently disallowing TWAs distributed to kids (Family Policy), it seems to have to do with the fact that websites might be able to replace the content as they have full network access, so it might make sense to take this into considerations and maybe disallow network traffic or restrict it somehow.",
       "createdAt": "2020-04-27T12:00:06Z",
-      "updatedAt": "2020-04-27T12:00:06Z",
+      "updatedAt": "2020-09-02T09:52:25Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "craigfrancis",
+          "authorAssociation": "NONE",
+          "body": "I'd like WebPackages to have a way to clearly request/show it has no network access.\r\n\r\nThis would make a perfect replacement for many PDF's (invoices, reports, terms and conditions, etc), which need to be completely self contained, stored/archived, forwarded; and would resolve several issues with PDF's (easier to author, layout responsive to screen size, accessible by default, etc)... [more info](https://github.com/craigfrancis/wdoc/).\r\n\r\nI have an [example invoice](https://craig.dev/misc/webPackage/changingContent.wbn) that clearly returns remote content.",
+          "createdAt": "2020-09-02T09:52:25Z",
+          "updatedAt": "2020-09-02T09:52:25Z"
+        }
+      ]
     },
     {
       "number": 577,
@@ -9228,6 +9299,81 @@
           "updatedAt": "2020-07-27T10:55:00Z"
         }
       ]
+    },
+    {
+      "number": 594,
+      "id": "MDU6SXNzdWU2ODk3OTU4Nzk=",
+      "title": "Ensure bundling subresources doesn't cost extra bandwidth",
+      "url": "https://github.com/WICG/webpackage/issues/594",
+      "state": "OPEN",
+      "author": "jyasskin",
+      "authorAssociation": "MEMBER",
+      "assignees": [],
+      "labels": [],
+      "body": "In #551, @briankanderson and @kuro68k worried that once folks are putting their subresources in bundles, it will be more difficult for browsers or extensions to avoid transferring a subset of those resources in order to save time or money. For example, browsers' \"disable images\" and \"disable javascript\" options should be able to block just those kinds of subresources without preventing the enabled kinds of subresources from loading. It sounds like there are also kinds of resources beyond \"all scripts\" that folks on satellite links want to block, although \"ads\" is adequately covered by #551.\r\n\r\nSome of @yoavweiss' ideas around having the browser express which resources are already cached, and having the server adaptively generate a subset of the bundle, could be helpful here, but\r\n1. We have to make sure the default is good even for servers that can't dynamically subset bundles, and\r\n2. I think we need more information than just the list of resource URLs. Maybe we also provide the `preload` `as` value?",
+      "createdAt": "2020-09-01T04:22:54Z",
+      "updatedAt": "2020-09-01T13:48:29Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "yoavweiss",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I think there are 2 separate cases here. There's \"bundles as a way to optimize subresource delivery\" and \"bundles as a way to deliver whole sites\".\r\nI think this problem may be more related to the former.\r\n\r\nWhen using bundles as an optimization, we could encourage (and maybe even enforce) that subresources would be for a certain destination (e.g. using an \"as\" attribute), so that if they need to be blocked based on their type, the browser can easily do that. Similarly, the browser would be able to block individual resources based on their URL (using the \"resources\" attribute).\r\nWhile the latter bit would only work for dynamic servers, the former would work for static ones as well.\r\n\r\nAll this falls apart when we want to deliver full applications in web bundles, as we'd now need both an `as` attribute *per-resource* and a dynamic server.\r\n\r\nSo I guess my question is: is it enough to cover the \"subresource optimization\" case? Or do we need to cover the \"app delivery\" case as well? And if we need to cover both, are we willing to take an RTT hit for the latter?",
+          "createdAt": "2020-09-01T04:34:31Z",
+          "updatedAt": "2020-09-01T04:34:31Z"
+        },
+        {
+          "author": "kuro68k",
+          "authorAssociation": "NONE",
+          "body": "Even one bundle per resource type wouldn't really help because the site operator will likely bundle all the images that get blocked anyway. Not just ads, some browsers/add-ons block images over a certain size (say 50k bytes).\r\n\r\nThe only way this can be mitigated is if the browser is presented with a complete manifest of all resources with enough detail to decide which ones it wants, and then the bundle is dynamically generated based on its decision.",
+          "createdAt": "2020-09-01T08:28:46Z",
+          "updatedAt": "2020-09-01T08:28:46Z"
+        },
+        {
+          "author": "KenjiBaheux",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Yes, this could be an option. Another option (a short term one): disable WBN support if any of the \"don't load resource of type X\" is enabled.\r\n\r\n@kuro68k do you have examples for the \"add-ons blocking images over a certain size\"? I'm wondering how it's done in practice.\r\n\r\nFor the \"app delivery\" scenario, I'm wondering if this could be based on client-hints. @yoavweiss is that what you had in mind given the \"one extra RTT\" hint?",
+          "createdAt": "2020-09-01T09:30:07Z",
+          "updatedAt": "2020-09-01T09:30:07Z"
+        },
+        {
+          "author": "kuro68k",
+          "authorAssociation": "NONE",
+          "body": "@KenjiBaheux uBlock Origin supports blocking all resources over X bytes.\r\n\r\nThere are other dangers here, e.g. if the browser says \"don't bother sending that ad image\" the site could refuse to let the user view other content. It's possible to do now but usually implemented in Javascript where it can be blocked, while this makes having the server do it much easier.",
+          "createdAt": "2020-09-01T09:39:01Z",
+          "updatedAt": "2020-09-01T09:39:01Z"
+        },
+        {
+          "author": "yoavweiss",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> @KenjiBaheux uBlock Origin supports blocking all resources over X bytes.\r\n\r\nI'm curious how they do that technically. The browser is not aware of the size of the resources it is about to download until they are downloaded, and in many cases (e.g. resources without content length) exceeding said quota.\r\n\r\nOtherwise, it seems rather unsafe to apply that to no-cors fetched cross-origin resources, as that can reveal information about the user's state. See [my talk](https://youtu.be/xVtli3mmBc4?t=1092) about this for more details.",
+          "createdAt": "2020-09-01T12:51:22Z",
+          "updatedAt": "2020-09-01T12:51:22Z"
+        },
+        {
+          "author": "kuro68k",
+          "authorAssociation": "NONE",
+          "body": "> > @KenjiBaheux uBlock Origin supports blocking all resources over X bytes.\r\n> \r\n> I'm curious how they do that technically. The browser is not aware of the size of the resources it is about to download until they are downloaded, and in many cases (e.g. resources without content length) exceeding said quota.\r\n> \r\n> Otherwise, it seems rather unsafe to apply that to no-cors fetched cross-origin resources, as that can reveal information about the user's state. See [my talk](https://youtu.be/xVtli3mmBc4?t=1092) about this for more details.\r\n\r\nAccording to the [documentation ](https://github.com/gorhill/uBlock/wiki/Per-site-switches#no-large-media-elements)it does contact the server to fetch the size of the object, it just then doesn't download it if it exceeds the threshold.",
+          "createdAt": "2020-09-01T13:48:29Z",
+          "updatedAt": "2020-09-01T13:48:29Z"
+        }
+      ]
+    },
+    {
+      "number": 595,
+      "id": "MDU6SXNzdWU2ODk4MTE2NzA=",
+      "title": "signature should be first",
+      "url": "https://github.com/WICG/webpackage/issues/595",
+      "state": "CLOSED",
+      "author": "shynome",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "If we have signature, we can generate a namespace from signature, then we can use history api and IndexedDB when we are offline.\r\nBut how to combine the online website and the offline wbn data store?  I have a resolution, add a new http header let the website  tell browser it wether like using the wbn resources, if response has the http header like `wbn-signature: /.well-know/my-website-signature?version=20200502`, hold doucument parse, let's get the signature firstly then create or bind the exist namespace and the website domain, if the wbn version is not the same browser get resources from the website, if the wbn version is the same use the wbn exist resources. Maybe the wbn version as a new http header is better",
+      "createdAt": "2020-09-01T05:02:57Z",
+      "updatedAt": "2020-09-01T05:56:09Z",
+      "closedAt": "2020-09-01T05:56:09Z",
+      "comments": []
     }
   ],
   "pulls": [
@@ -48742,24 +48888,26 @@
       "id": "MDExOlB1bGxSZXF1ZXN0NDY2NTAxNjE0",
       "title": "Update loading spec to support subresource substitution",
       "url": "https://github.com/WICG/webpackage/pull/591",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "horo-t",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
-      "body": "I'd like to update the \"Loading Signed Exchanges\" spec to support Signed Exchange subresource substitution.\nThe logic is copied from \"Algorithm sketch\" section of the explainer of [Signed Exchange subresource substitution](https://github.com/WICG/webpackage/blob/master/explainers/signed-exchange-subresource-subtitution-explainer.md#algorithm-sketch).\n\n\n<!--\n    This comment and the below content is programatically generated.\n    You may add a comma-separated list of anchors you'd like a\n    direct link to below (e.g. #idl-serializers, #idl-sequence):\n\n    Don't remove this comment or modify anything below this line.\n    If you don't want a preview generated for this pull request,\n    just replace the whole of this comment's content by \"no preview\"\n    and remove what's below.\n-->\n***\n<a href=\"https://pr-preview.s3.amazonaws.com/horo-t/webpackage/pull/591.html\" title=\"Last updated on Aug 28, 2020, 9:42 AM UTC (5fd8b75)\">Preview</a> | <a href=\"https://pr-preview.s3.amazonaws.com/WICG/webpackage/591/2ab2cca...horo-t:5fd8b75.html\" title=\"Last updated on Aug 28, 2020, 9:42 AM UTC (5fd8b75)\">Diff</a>",
+      "body": "I'd like to update the \"Loading Signed Exchanges\" spec to support Signed Exchange subresource substitution.\nThe logic is copied from \"Algorithm sketch\" section of the explainer of [Signed Exchange subresource substitution](https://github.com/WICG/webpackage/blob/master/explainers/signed-exchange-subresource-subtitution-explainer.md#algorithm-sketch).\n\n\n<!--\n    This comment and the below content is programatically generated.\n    You may add a comma-separated list of anchors you'd like a\n    direct link to below (e.g. #idl-serializers, #idl-sequence):\n\n    Don't remove this comment or modify anything below this line.\n    If you don't want a preview generated for this pull request,\n    just replace the whole of this comment's content by \"no preview\"\n    and remove what's below.\n-->\n***\n<a href=\"https://pr-preview.s3.amazonaws.com/horo-t/webpackage/pull/591.html\" title=\"Last updated on Sep 4, 2020, 12:29 AM UTC (8466393)\">Preview</a> | <a href=\"https://pr-preview.s3.amazonaws.com/WICG/webpackage/591/7d82584...horo-t:8466393.html\" title=\"Last updated on Sep 4, 2020, 12:29 AM UTC (8466393)\">Diff</a>",
       "createdAt": "2020-08-12T04:35:36Z",
-      "updatedAt": "2020-08-28T10:58:17Z",
+      "updatedAt": "2020-09-04T00:32:19Z",
       "baseRepository": "WICG/webpackage",
       "baseRefName": "master",
-      "baseRefOid": "2ab2cca9b8e211c6dff98ef3ebc4c694d7927446",
+      "baseRefOid": "7d82584113dc44de97d13866cd083fa55c69076c",
       "headRepository": "horo-t/webpackage",
       "headRefName": "subresource-sxg-loading",
-      "headRefOid": "5fd8b75395a394448fa1859d44a9fef99d8c8d2f",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "84663936b5da33000dd1679b70a74926e1517bba",
+      "closedAt": "2020-09-04T00:32:19Z",
+      "mergedAt": "2020-09-04T00:32:18Z",
+      "mergedBy": "jyasskin",
+      "mergeCommit": {
+        "oid": "bfd16402098add7dd5b39e99f7baac1d15407f73"
+      },
       "comments": [
         {
           "author": "horo-t",
@@ -48800,49 +48948,49 @@
               "originalPosition": 6,
               "body": "We don't generally link back to the explainer from the specification. Instead, this paragraph should summarize the behavior the section is trying to achieve.",
               "createdAt": "2020-08-12T20:00:43Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:52Z"
             },
             {
               "originalPosition": 15,
               "body": "\"the alternate subresources signed exchanges\" needs to link to its definition. I don't see one anywhere in this patch.\r\n\r\nThat probably belongs as the first subsection of this new section, and I think it's the `<link rel=\"alternate\" type=\"application/signed-exchange\" anchor=\"https://prenavigated.example/subresource.css\" href=\"https://distributor.example/subresource.css.sxg\">`? https://w3c.github.io/resource-hints/#dfn-resource-hint-link has a similar definition of a term to refer to semantics defined elsewhere. The new section here should also explain how the attributes on that `<link>` combine to the meaning we want.",
               "createdAt": "2020-08-12T20:02:34Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:52Z"
             },
             {
               "originalPosition": 19,
               "body": "Nothing defines \"allowed-alt-sxg\" yet. This document should have a section to define that link relation, similar to the sections under https://w3c.github.io/resource-hints/#resource-hints. Probably put that above the monkeypatches since it's more about the overall semantics and so more useful for general developers.",
               "createdAt": "2020-08-12T20:13:09Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:52Z"
             },
             {
               "originalPosition": 18,
               "body": "The only defined resource hint that tells the UA to process the inner response at all is [prerender](https://w3c.github.io/resource-hints/#prerender), which is fairly deprecated. We need to specify that this happens inside of `prenavigate`, which doesn't have a spec yet... @yoavweiss, what's the status there?\r\n\r\nI think this block needs to be a monkeypatch to either the `prenavigate` definition, or the [fetch and process the linked resource algorithm](https://html.spec.whatwg.org/multipage/semantics.html#fetch-and-process-the-linked-resource) that `preload` uses. Probably both: `prenavigate` to set some flag about which origins are ok to connect to, and \"fetch and process the linked resource\" to notice that and use the `rel=alternate` link instead.",
               "createdAt": "2020-08-12T20:34:27Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:52Z"
             },
             {
               "originalPosition": 39,
               "body": "```suggestion\r\n\r\nNote: As browsers move toward partitioned HTTP caches, the source\r\n```",
               "createdAt": "2020-08-12T20:35:47Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:52Z"
             },
             {
               "originalPosition": 54,
               "body": "@domfarolino, I'm having trouble finding where `<link rel=preload>` applies the `imagesrcset` and `imagesizes` attributes to control what it fetches. https://www.w3.org/TR/preload/#processing appears to use the default https://html.spec.whatwg.org/multipage/semantics.html#fetch-and-process-the-linked-resource algorithm, which doesn't consult those attributes. Since you wrote https://github.com/whatwg/html/pull/4048, can you point us in the right direction?\r\n\r\nWe should find or define a way for this algorithm to just ask the new document what it preloaded. We'll also have to pick the moment at which we check this set, since documents can add and remove `<link rel=\"allowed-alt-sxg\">` and `<link rel=\"preload\">` elements at any time.",
               "createdAt": "2020-08-12T20:47:24Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:52Z"
             },
             {
               "originalPosition": 36,
               "body": "Monkeypatches need to specify where any new steps are added.",
               "createdAt": "2020-08-12T20:57:27Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:52Z"
             },
             {
               "originalPosition": 38,
               "body": "I think \"the one that serves the navigation itself\" is just naturally excluded from the set of SXGs that went through the \"attach it to the top-level prefetch\" step above. You do need to take those attached SXGs and attach them to the new document.",
               "createdAt": "2020-08-12T20:59:32Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:52Z"
             }
           ]
         },
@@ -48862,7 +49010,7 @@
               "originalPosition": 18,
               "body": "`prenavigate` is indeed not currently defined. All we have is a few [past discussions](https://github.com/w3c/resource-hints/issues/82#issuecomment-532072736) :/\r\n\r\n",
               "createdAt": "2020-08-13T14:36:46Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:52Z"
             }
           ]
         },
@@ -48882,7 +49030,7 @@
               "originalPosition": 18,
               "body": "(As we also chatted elsewhere) I don't think this part specifically relies on `prenavigate` (while this one itself needs to have spec too), but rather depending on the unclarified behavior processing link headers won't be considered preprocessing the content (https://github.com/w3c/resource-hints/issues/77#issuecomment-360743041).  But yes this part also needs to be reflected in the spec text.",
               "createdAt": "2020-08-13T23:29:44Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:52Z"
             }
           ]
         },
@@ -48902,7 +49050,7 @@
               "originalPosition": 54,
               "body": "While runnning [default fetch and process the linked resource](https://html.spec.whatwg.org/multipage/semantics.html#default-fetch-and-process-the-linked-resource), the [linked resource fetch setup steps for preload](https://html.spec.whatwg.org/multipage/links.html#link-type-preload:linked-resource-fetch-setup-steps) is called from step 10.\r\n>  10. Run the linked resource fetch setup steps, given el and request. If the result is false, then return.\r\n\r\nThe [linked resource fetch setup steps for preload](https://html.spec.whatwg.org/multipage/links.html#link-type-preload:linked-resource-fetch-setup-steps) calls [select an image source](https://html.spec.whatwg.org/multipage/images.html#select-an-image-source) which calls [update the source set](https://html.spec.whatwg.org/multipage/images.html#update-the-source-set) to update `source set` using the imagesrcset and imagesizes attributes and returns `selected source` from the `source set`. And\r\n> 4. Set request's url to url.\r\n\r\nSo I think we need the monkypatch after `4. If as is \"image\", then:` of [the linked resource fetch setup steps for preload](https://html.spec.whatwg.org/multipage/links.html#link-type-preload:linked-resource-fetch-setup-steps).\r\n",
               "createdAt": "2020-08-14T07:03:39Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:52Z"
             }
           ]
         },
@@ -48922,7 +49070,7 @@
               "originalPosition": 6,
               "body": "Updated this section and introduced new terms **allowed-alt-sxg link**, **alternate signed exchange link** and **header integrity value**.",
               "createdAt": "2020-08-14T12:04:28Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:52Z"
             }
           ]
         },
@@ -48942,7 +49090,7 @@
               "originalPosition": 15,
               "body": "Introduced new term **alternate signed exchange link**.",
               "createdAt": "2020-08-14T12:05:42Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:52Z"
             }
           ]
         },
@@ -48962,7 +49110,7 @@
               "originalPosition": 19,
               "body": "Introduced the terms **allowed-alt-sxg link**.",
               "createdAt": "2020-08-14T12:06:05Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:52Z"
             }
           ]
         },
@@ -48982,7 +49130,7 @@
               "originalPosition": 39,
               "body": "Done.",
               "createdAt": "2020-08-14T12:06:32Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:52Z"
             }
           ]
         },
@@ -49002,7 +49150,7 @@
               "originalPosition": 54,
               "body": "Changed this PR to monkeypatch [linked resource fetch setup steps for preload type of linked resource](https://html.spec.whatwg.org/multipage/links.html#link-type-preload:linked-resource-fetch-setup-steps).",
               "createdAt": "2020-08-14T12:07:26Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             }
           ]
         },
@@ -49022,7 +49170,7 @@
               "originalPosition": 36,
               "body": "Done",
               "createdAt": "2020-08-14T12:07:48Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             }
           ]
         },
@@ -49042,7 +49190,7 @@
               "originalPosition": 38,
               "body": "Introduced **prefetched subresource singed exchanges** and **allowed alternate subresource signed exchange links** in [navigation param struct](https://html.spec.whatwg.org/multipage/browsing-the-web.html#navigation-params), and **prefetched singed exchanges for navigation**, **prefetched subresource singed exchanges**, **transferred subresource singed exchanges** and **allowed alternate\r\nsubresource signed exchange links** in [document  object](https://html.spec.whatwg.org/multipage/dom.html#the-document-object)",
               "createdAt": "2020-08-14T12:10:46Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             }
           ]
         },
@@ -49062,7 +49210,7 @@
               "originalPosition": 18,
               "body": "I think this monkeypatch does describes the behavior of processing the preload header in the inner response of the prefetched signed exchange.\r\n",
               "createdAt": "2020-08-14T12:21:59Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             }
           ]
         },
@@ -49082,43 +49230,43 @@
               "originalPosition": 22,
               "body": "```suggestion\r\nWhen prenavigating to a page held in a signed exchange, it can be useful to\r\nalso prefetch subresources of that page as signed exchanges from the same\r\nserver. To identify those transitive prefetchable resources, this section introduces\r\nan extension to the HTTP Link header.\r\n```",
               "createdAt": "2020-08-18T21:38:48Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 24,
               "body": "```suggestion\r\n* An <dfn dfn-type=dfn>allowed-alt-sxg link</dfn> is a relationship that is used\r\n```",
               "createdAt": "2020-08-18T21:39:02Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 47,
               "body": "This is |headerBytes| in https://pr-preview.s3.amazonaws.com/horo-t/webpackage/pull/591.html#parsing-a-signed-exchange, and we need to return it from that algorithm in order to let this one use it. It's probably reasonable to stick the sha256 into https://pr-preview.s3.amazonaws.com/horo-t/webpackage/pull/591.html#exchange.",
               "createdAt": "2020-08-18T21:55:17Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 24,
               "body": "Imitate the language used in https://html.spec.whatwg.org/multipage/links.html#link-type-prefetch when defining this new link type. It probably makes sense to describe this as a monkeypatch to HTML so we don't end up with duplication like https://www.w3.org/TR/resource-hints/#prefetch.",
               "createdAt": "2020-08-18T22:07:49Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 33,
               "body": "This is not actually a link relationship since it's not a keyword. Imitating https://www.w3.org/TR/resource-hints/#dfn-resource-hint-link, how about:\r\n\r\n```suggestion\r\n* An <dfn>alternate signed exchange link</dfn> is a `` `Link` `` header sent with a signed exchange |S|, with the [=alternate=] link type, the `type` parameter set to `application/signed-exchange`, and a [=Link Context=]. The [=Link Context=] MUST be the [=Link Target=] of a [=preload=] `` `Link` `` header inside the signed content of |S|, and the [=alternate signed exchange link=] means that this resource can also be found inside the signed exchange at the [=Link Target=] of the [=alternate signed exchange link=].\r\n\r\n    <div class=\"example\" id=\"example-alternate-signed-exchange-link\">\r\n    ```http\r\n    Link: <...>; ...\r\n    ```\r\n  </div>\r\n```\r\n\r\nAdd the Link Target (https://tools.ietf.org/html/rfc8288#section-3.1) and Link Context (https://tools.ietf.org/html/rfc8288#section-3.2) definitions to the `<pre class='anchors'>` so they appear correctly in the References section.\r\n\r\nYou may have to fiddle with the bikeshed markdown to get it to link to https://html.spec.whatwg.org/multipage/links.html#rel-alternate and look right. See https://tabatkins.github.io/bikeshed/#autolinking.\r\n\r\nThis would probably make more sense with a diagram showing where in the inner and outer signed exchanges the headers appear. Try to make one with https://plantuml.com/component-diagram#58bb821cf05c48a2?",
               "createdAt": "2020-08-18T22:35:02Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 66,
               "body": "```suggestion\r\nThe {{Document}} has a set of <dfn for=\"Document\" dfn-type=dfn>prefetched singed exchanges\r\n```",
               "createdAt": "2020-08-18T22:36:35Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 69,
               "body": "```suggestion\r\nThe {{Document}} has a set of <dfn for=\"Document\" dfn-type=dfn>prefetched\r\n```\r\n\r\nAnd similarly for the rest.",
               "createdAt": "2020-08-18T22:37:39Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             }
           ]
         },
@@ -49138,7 +49286,7 @@
               "originalPosition": 33,
               "body": "> You may have to fiddle with the bikeshed markdown to get it to link to https://html.spec.whatwg.org/multipage/links.html#rel-alternate and look right. See https://tabatkins.github.io/bikeshed/#autolinking.\r\n\r\nSorry I may not understand well how bikeshed works.\r\nI created a PR to the HTML spec to export `rel` and `alternate`. https://github.com/whatwg/html/pull/5843\r\nDo I need to wait for the PR to be merged?",
               "createdAt": "2020-08-19T08:14:32Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             }
           ]
         },
@@ -49158,31 +49306,31 @@
               "originalPosition": 47,
               "body": "Done",
               "createdAt": "2020-08-19T09:03:05Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 66,
               "body": "Done",
               "createdAt": "2020-08-19T09:03:10Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 69,
               "body": "Done",
               "createdAt": "2020-08-19T09:03:14Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 24,
               "body": "done",
               "createdAt": "2020-08-19T09:03:59Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 22,
               "body": "Done",
               "createdAt": "2020-08-19T09:04:06Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             }
           ]
         },
@@ -49202,43 +49350,43 @@
               "originalPosition": 25,
               "body": "Based on discussion in https://github.com/whatwg/html/pull/5843, let's use a better `dfn-type`:\r\n\r\n```suggestion\r\n* Link type \"<dfn dfn-type=\"attr-value\" dfn-for=\"link/rel\">allowed-alt-sxg</dfn>\"\r\n```",
               "createdAt": "2020-08-19T23:39:43Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 28,
               "body": "Silly English nits:\r\n\r\n```suggestion\r\n    in the HTTP <a http-header>Link</a> header of the inner HTTP response of the main\r\n```",
               "createdAt": "2020-08-19T23:40:35Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 30,
               "body": "I think you can \r\n\r\n```suggestion\r\n    resource signed exchange to indicate that the subresource of the\r\n```\r\n\r\nand just use `<{link/rel/allowed-alt-sxg}> link` to refer to these.",
               "createdAt": "2020-08-19T23:43:23Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 33,
               "body": "```suggestion\r\n    The <dfn element-attr for=\"link\">header-integrity</dfn> parameter holds the value of the\r\n    [=exchange/header integrity value=] of the [=alternate signed exchange=], encoded as a [[CSP]] <a grammar>hash-source</a>.\r\n```",
               "createdAt": "2020-08-19T23:57:09Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 31,
               "body": "This reads like the Link Target has a subresource that can be replaced, but it's actually that the Link Target is a subresource of the current page, and it can be replaced. So maybe:\r\n\r\n```suggestion\r\n    that the content of the\r\n    [=Link Target=] is also available as a particular signed exchange identified by the <{link/header-integrity}> parameter.\r\n```",
               "createdAt": "2020-08-19T23:59:45Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 41,
               "body": "```suggestion\r\n            header-integrity=\"sha256-XXXXXX\"\r\n```",
               "createdAt": "2020-08-20T00:08:26Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 71,
               "body": "```suggestion\r\nThe {{Document}} has a set of <dfn dfn-for=\"Document\" dfn-type=dfn>prefetched\r\n```\r\n\r\nand similarly for the sets below.",
               "createdAt": "2020-08-20T00:09:58Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             }
           ]
         },
@@ -49258,43 +49406,43 @@
               "originalPosition": 25,
               "body": "done",
               "createdAt": "2020-08-20T01:21:24Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 28,
               "body": "done",
               "createdAt": "2020-08-20T01:48:16Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 30,
               "body": "done",
               "createdAt": "2020-08-20T01:48:25Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 31,
               "body": "done",
               "createdAt": "2020-08-20T01:48:54Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 33,
               "body": "done",
               "createdAt": "2020-08-20T01:49:14Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 41,
               "body": "done",
               "createdAt": "2020-08-20T01:49:20Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 71,
               "body": "done",
               "createdAt": "2020-08-20T01:49:25Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             }
           ]
         },
@@ -49314,67 +49462,67 @@
               "originalPosition": 62,
               "body": "Dunno why these wound up indented; I think they should just be normal paragraph lines.\r\n\r\n```suggestion\r\nvalue</dfn>, either null or, for responses that [=response/came from a\r\nsigned exchange=], a [=byte sequence=] holding the [=SHA-256=] hash that\r\nverified the [=exchange/response=]'s [=response/header list=].\r\n\r\nNote: The [=response/header integrity value=] doesn\u2019t change even if the\r\npublisher signs the content again or changes the signing key, but it does\r\nchange if any of the headers or body change. (It catches changes to the body\r\nbecause a valid signed exchange's headers have to include a `Digest` value\r\nthat covers the body.)\r\n```",
               "createdAt": "2020-08-24T21:24:28Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 117,
               "body": "I think you mean to be defining new parameters ([\"Target Attributes\"](https://tools.ietf.org/html/rfc8288#section-3.4)) on the `<a http-header>Link</a>` _header_, not the element.  If you mean the element, they're usually lower-case, and they take \"attributes\" instead of \"parameters\".",
               "createdAt": "2020-08-24T21:26:35Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 119,
               "body": "You need to define its format. I think you mean that it's an instance of https://httpwg.org/http-extensions/draft-ietf-httpbis-variants.html#variants ... which is tricky because that's a full sh-dict, which doesn't really fit as a field inside another header. What's the implementation doing?",
               "createdAt": "2020-08-24T21:48:07Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 121,
               "body": "Similarly here, with https://httpwg.org/http-extensions/draft-ietf-httpbis-variants.html#variant-key.",
               "createdAt": "2020-08-24T21:48:39Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 150,
               "body": "I know I wrote the original version of this, so sorry for leading the PR astray, but we actually should spell out variables, so `|signedResponse|` instead of `|R|`, `|allowedSxgLinks|` instead of `|L|`, etc.",
               "createdAt": "2020-08-24T22:34:54Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 158,
               "body": "Should this be `<{link/rel/preload}>`?",
               "createdAt": "2020-08-24T22:36:20Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 161,
               "body": "We need to define \"semantically-equivalent link element\" in order to use it here.",
               "createdAt": "2020-08-24T22:36:41Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 165,
               "body": "```suggestion\r\n        <{link/href}> attribute's value, with a base URL of |R|'s [=response/URL=].\r\n```",
               "createdAt": "2020-08-24T22:43:38Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 164,
               "body": "Optionally:\r\n\r\n```suggestion\r\n    1. Let |url| be the result of [=URL parser|parsing=] |el|'s\r\n```",
               "createdAt": "2020-08-24T22:44:26Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 160,
               "body": "I would probably use this line to explain why we create link elements and requests that seem unused.\r\n\r\n```suggestion\r\n1. For each |preload link| in |preload links|, use the following steps to resolve the link's actual target, incorporating attributes like {<link/imagesrcset>} and <{link/imagesizes}>}:\r\n```",
               "createdAt": "2020-08-24T23:01:54Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 330,
               "body": "I've run out of time to review today, so this comment is just a general direction rather than actually what needs to be fixed, but:\r\n\r\nWe're going to have to reconcile that the HTML spec pretends that it's dealing with `<link>` elements, but we're doing `Link` headers, and that HTML is trying to handle things incrementally, but we're putting a restriction on the overall set of `Link` headers. It might work to define a predicate on the response that runs over the full set of response headers to say whether to do the resource substitution at all, and then maybe you can avoid checking whether each element came from a header...",
               "createdAt": "2020-08-24T23:16:40Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             }
           ]
         },
@@ -49394,67 +49542,67 @@
               "originalPosition": 62,
               "body": "done",
               "createdAt": "2020-08-25T00:16:19Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 117,
               "body": "done.",
               "createdAt": "2020-08-25T00:29:48Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 121,
               "body": "Added the explanation.",
               "createdAt": "2020-08-25T01:05:10Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 119,
               "body": "Added the explanation.\r\nSorry, I don't understand why sh-dict doesn't fit as a field inside another header. \r\n\r\nCurrently Chrome is supporting the format defined in [draft-ietf-httpbis-variants-04](https://tools.ietf.org/html/draft-ietf-httpbis-variants-04).",
               "createdAt": "2020-08-25T01:19:10Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 150,
               "body": "Done",
               "createdAt": "2020-08-25T01:25:31Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 158,
               "body": "Done.",
               "createdAt": "2020-08-25T01:26:49Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 160,
               "body": "done.",
               "createdAt": "2020-08-25T01:29:11Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 161,
               "body": "Done. Linked to https://tools.ietf.org/html/rfc5988##page-5:~:text=semantically%20equivalent",
               "createdAt": "2020-08-25T01:50:19Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 164,
               "body": "done",
               "createdAt": "2020-08-25T01:50:24Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 165,
               "body": "done",
               "createdAt": "2020-08-25T01:51:52Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 330,
               "body": "Added note about the Issue(whatwg/html#4224).",
               "createdAt": "2020-08-25T03:39:43Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             }
           ]
         },
@@ -49474,49 +49622,49 @@
               "originalPosition": 32,
               "body": "I don't think this is the right link",
               "createdAt": "2020-08-25T07:56:23Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 158,
               "body": "This is not an \"appropriate times\" algorithm, (e.g. like [this one](https://html.spec.whatwg.org/#link-type-modulepreload)), but more of a \"should we preload this resource?\" one.",
               "createdAt": "2020-08-25T07:57:28Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 209,
               "body": "This simply extends the Document object. I don't think I'd categorize it as \"mokeypatch\".",
               "createdAt": "2020-08-25T07:58:40Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 236,
               "body": "Similarly to above, extending an object is not necessarily \"monkeypatching\"",
               "createdAt": "2020-08-25T07:59:12Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 255,
               "body": "I think this should mokeypatch Fetch or HTML (if this is only meant for prenavigates) directly.\r\nSo when either processes a response, they need to call an algorithm defined here that would:\r\n* Check if the response is a prefetch one (e.g. by checking its request's initiator) and otherwise bail\r\n* Check if the response came from an SXG. Otherwise bail\r\n* Create an exchange...",
               "createdAt": "2020-08-25T08:06:02Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 158,
               "body": "As such, it should be called from somewhere.",
               "createdAt": "2020-08-25T08:09:25Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 275,
               "body": "\"has a matching exchange\" is a bit handwavy. Might be better to define \"prefetched signed exchanged for navigation\" as a [map](https://infra.spec.whatwg.org/#maps)",
               "createdAt": "2020-08-25T08:21:49Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 330,
               "body": "Also \"is for the main resource\" is not really precise, and it's be better to have some boolean that indicates what you mean here.",
               "createdAt": "2020-08-25T08:28:05Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             }
           ]
         },
@@ -49536,43 +49684,43 @@
               "originalPosition": 18,
               "body": "You don't have to repeat `type: dfn` for subsequent definitions.\r\n\r\n```suggestion\r\n    type: dfn\r\n        text: Link Target; url: section-3.1\r\n        text: Link Context; url: section-3.2\r\n        text: Relation Type; url: section-3.3\r\n        text: Target Attributes; url: section-3.4\r\n        text: Parsing a Link Field Value; url: appendix-B.2\r\n```",
               "createdAt": "2020-08-27T22:02:02Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 242,
               "body": "I would probably define a small algorithm for this bit to make it more readable, since it's used so many times. E.g.\r\n\r\n> `A link header value |link|'s <dfn noexport>Target Attribute named</dfn> |name| is the second item of the first tuple of |link|'s [=Target Attributes list|Target Attributes=] whose first item matches the string |name|, or the empty string (\"\") if no such tuple is present.`\r\n\r\nAnd then use it like\r\n```\r\nLet |outerLinkVariants| be |outerLink|'s [=Target Attribute named=] `\"variants\"`.\r\n```",
               "createdAt": "2020-08-27T22:36:02Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 285,
               "body": "```suggestion\r\n        1. Create a <{link}> element |linkElement| whose <{link/href}> attribute\r\n            is |linkTarget|, <{link/imagesrcset}> attribute is\r\n            |imagesrcset|, and <{link/imagesizes}> attribute is |imagesizes|.\r\n```",
               "createdAt": "2020-08-27T22:37:01Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 293,
               "body": "```suggestion\r\n        1. If |allowedSxgLink|'s linkTarget isn't the same as |linkTarget|, then continue.\r\n```\r\n\r\nIt might be good to explicitly define the Allowed SXG Link struct so that you could link to its fields in the above line.",
               "createdAt": "2020-08-27T22:39:55Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 307,
               "body": "We can probably refactor [=matches the stored exchange=] so this algorithm doesn't need to create a placeholder exchange, but no need to do that in this change.",
               "createdAt": "2020-08-27T22:44:41Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 443,
               "body": "Similarly down here, because [tuples are structs](https://infra.spec.whatwg.org/#tuple), all the items have names, which need to be implied or stated when the tuple is created. Here, the variable names that created the tuple work well as names, so you can just use `|allowedSxgLink|'s innerLinkVariants` or similar wherever it's used, instead of needing steps to pull them out into local variables.",
               "createdAt": "2020-08-27T22:49:33Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 471,
               "body": "It wasn't obvious why it was ok for |headerIntegrity| to be an empty string here. I think it's that when it's empty, there was no allowed signed exchange, and so we don't need it to have been prefetched ... in which case maybe it'll be clearer to put the \"If |headerIntegrity| is not an empty string\" condition around both the for loop and what's left of this step?",
               "createdAt": "2020-08-27T22:55:28Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             }
           ]
         },
@@ -49592,37 +49740,37 @@
               "originalPosition": 18,
               "body": "done",
               "createdAt": "2020-08-28T01:11:40Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 242,
               "body": "done",
               "createdAt": "2020-08-28T02:17:03Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 285,
               "body": "done",
               "createdAt": "2020-08-28T02:22:50Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 293,
               "body": "Done",
               "createdAt": "2020-08-28T05:00:45Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 443,
               "body": "Done",
               "createdAt": "2020-08-28T05:01:31Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 471,
               "body": "I introduced `getting allowed signed exchange link info` algorithm which doesn't allow `allowed signed exchange link info`'s `header integrity` to be null. And I added a Note about the intension. Does this answer your question?",
               "createdAt": "2020-08-28T05:49:47Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             }
           ]
         },
@@ -49642,25 +49790,25 @@
               "originalPosition": 344,
               "body": "I don't think that's what you want to do here. You want to wait until the viewport is \"known\" (in practice, by scanning HTML tokens). Otherwise, IIUC, the viewport is initialized by the parser, which creation you're blocking here...\r\nMight be worthwhile to add a note/TODO saying that this needs to be better defined if/when we'll define the preloadScanner",
               "createdAt": "2020-08-28T08:18:52Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 247,
               "body": "This is an O(n^2) algorithm. Is this how we're implementing this?\r\nNot a blocker, but might be better to redefine this using a map, as a followup. ",
               "createdAt": "2020-08-28T08:21:23Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 378,
               "body": "Same O(n^2) comment as above",
               "createdAt": "2020-08-28T08:22:04Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 443,
               "body": "I'm not sure I get this. It seems that the resource is loaded even if `canLoadAlternateSxg` is false.\r\nIf that's intentional, a better name could clarify that",
               "createdAt": "2020-08-28T08:27:43Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             }
           ]
         },
@@ -49680,13 +49828,13 @@
               "originalPosition": 199,
               "body": "As the algorithms are rather lengthy, I think it would help readability to add a note here outlining (at a high level) what they are doing and why",
               "createdAt": "2020-08-28T08:40:07Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 342,
               "body": "Same comment here - a note would be helpful",
               "createdAt": "2020-08-28T08:40:33Z",
-              "updatedAt": "2020-08-28T09:42:12Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             }
           ]
         },
@@ -49706,37 +49854,37 @@
               "originalPosition": 199,
               "body": "done",
               "createdAt": "2020-08-28T08:54:57Z",
-              "updatedAt": "2020-08-28T09:43:08Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 342,
               "body": "done",
               "createdAt": "2020-08-28T09:08:43Z",
-              "updatedAt": "2020-08-28T09:43:08Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 344,
               "body": "Added Note.",
               "createdAt": "2020-08-28T09:09:32Z",
-              "updatedAt": "2020-08-28T09:43:07Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 443,
               "body": "Added Note.",
               "createdAt": "2020-08-28T09:22:09Z",
-              "updatedAt": "2020-08-28T09:43:08Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 378,
               "body": "I will use a map as a followup.",
               "createdAt": "2020-08-28T09:38:36Z",
-              "updatedAt": "2020-08-28T09:43:07Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 247,
               "body": "Blink is using a map AlternateSignedExchangeResourceInfo.EntryMap.\r\n\r\nI will do so as a followup.",
               "createdAt": "2020-08-28T09:38:42Z",
-              "updatedAt": "2020-08-28T09:43:07Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             }
           ]
         },
@@ -49756,31 +49904,153 @@
               "originalPosition": 221,
               "body": "\"Set an entry\" would make this clearer without clicking the link",
               "createdAt": "2020-08-28T10:40:06Z",
-              "updatedAt": "2020-08-28T10:58:17Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 202,
               "body": "It would be good to make the note more descriptive, outlining that this is getting all the alternateLinks from the outer response, see if they're allowed by the inner response, matches preloads to allowed, etc.",
               "createdAt": "2020-08-28T10:52:54Z",
-              "updatedAt": "2020-08-28T10:58:17Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 343,
               "body": "Same as above, would be good to outline what the algorithm is doing",
               "createdAt": "2020-08-28T10:54:54Z",
-              "updatedAt": "2020-08-28T10:58:18Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 465,
               "body": "Thanks! That makes things clearer! :)",
               "createdAt": "2020-08-28T10:55:14Z",
-              "updatedAt": "2020-08-28T10:58:18Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
             },
             {
               "originalPosition": 373,
               "body": "Non blocking note: Might be worthwhile to coalesce the common parts of the 2 large fetching algorithms into a single one, called from both places. As is, there's a lot of repetition.",
               "createdAt": "2020-08-28T10:57:21Z",
-              "updatedAt": "2020-08-28T10:58:18Z"
+              "updatedAt": "2020-09-04T00:28:53Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NDc4MjgzODM1",
+          "commit": {
+            "abbreviatedOid": "5fd8b75"
+          },
+          "author": "horo-t",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "Thank you!",
+          "createdAt": "2020-08-31T03:17:58Z",
+          "updatedAt": "2020-08-31T04:02:24Z",
+          "comments": [
+            {
+              "originalPosition": 221,
+              "body": "Done.",
+              "createdAt": "2020-08-31T03:17:58Z",
+              "updatedAt": "2020-09-04T00:28:53Z"
+            },
+            {
+              "originalPosition": 202,
+              "body": "Done.",
+              "createdAt": "2020-08-31T03:41:07Z",
+              "updatedAt": "2020-09-04T00:28:53Z"
+            },
+            {
+              "originalPosition": 343,
+              "body": "Done.",
+              "createdAt": "2020-08-31T03:52:13Z",
+              "updatedAt": "2020-09-04T00:28:53Z"
+            },
+            {
+              "originalPosition": 373,
+              "body": "I will do so when I will use a map as a followup.",
+              "createdAt": "2020-08-31T03:58:46Z",
+              "updatedAt": "2020-09-04T00:28:53Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NDgxMTUwNTc4",
+          "commit": {
+            "abbreviatedOid": "c6c10d0"
+          },
+          "author": "jyasskin",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2020-09-02T18:19:11Z",
+          "updatedAt": "2020-09-03T00:30:15Z",
+          "comments": [
+            {
+              "originalPosition": 302,
+              "body": "I think \"matches\" here means [\"is identical to\"](https://infra.spec.whatwg.org/#string-is)? Or did you implement something more flexible?",
+              "createdAt": "2020-09-02T18:19:12Z",
+              "updatedAt": "2020-09-04T00:28:53Z"
+            },
+            {
+              "originalPosition": 306,
+              "body": "Is this string equality or [URL equivalence](https://url.spec.whatwg.org/#concept-url-equals)? Because the [Link Context is a URL](https://tools.ietf.org/html/rfc8288#section-3.2), I'm going to assume it's parsed and then checked for URL equivalence, but we need to be sure to be precise about this to avoid security problems when one of the links is unnecessarily more percent-encoded than the other.",
+              "createdAt": "2020-09-02T18:20:56Z",
+              "updatedAt": "2020-09-04T00:28:53Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NDgxNDEzOTE5",
+          "commit": {
+            "abbreviatedOid": "c6c10d0"
+          },
+          "author": "horo-t",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2020-09-03T01:01:43Z",
+          "updatedAt": "2020-09-03T01:06:55Z",
+          "comments": [
+            {
+              "originalPosition": 302,
+              "body": "Yes. The implementation is checking the equality of strings in  alternate_signed_exchange_resource_info.cc",
+              "createdAt": "2020-09-03T01:01:43Z",
+              "updatedAt": "2020-09-04T00:28:53Z"
+            },
+            {
+              "originalPosition": 306,
+              "body": "Yes. The implementation is checking the equality of URL in alternate_signed_exchange_resource_info.cc.\r\nSorry I'm not sure what kind of security problems exist here.",
+              "createdAt": "2020-09-03T01:06:24Z",
+              "updatedAt": "2020-09-04T00:28:53Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NDgyMjU5MjI1",
+          "commit": {
+            "abbreviatedOid": "4ce3ca5"
+          },
+          "author": "jyasskin",
+          "authorAssociation": "MEMBER",
+          "state": "APPROVED",
+          "body": "I finally got through the whole thing. Thanks for bearing with me. I'll merge it now, and we can fix up any mistakes I made in another PR.",
+          "createdAt": "2020-09-03T23:08:43Z",
+          "updatedAt": "2020-09-04T00:29:33Z",
+          "comments": [
+            {
+              "originalPosition": 314,
+              "body": "Same question about this destination.",
+              "createdAt": "2020-09-03T23:08:43Z",
+              "updatedAt": "2020-09-04T00:29:33Z"
+            },
+            {
+              "originalPosition": 296,
+              "body": "This sets the destination to the empty string, but it looks like we have an `as` value above. We should use that, right?",
+              "createdAt": "2020-09-03T23:21:17Z",
+              "updatedAt": "2020-09-04T00:29:33Z"
+            },
+            {
+              "originalPosition": 448,
+              "body": "This looks like it'll use the `header-integrity` of the last matching `allowed-alt-sxg` link if multiple such links match. Does that match your implementation?",
+              "createdAt": "2020-09-04T00:09:43Z",
+              "updatedAt": "2020-09-04T00:29:33Z"
             }
           ]
         }
