@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2020-09-11T17:49:19.954335+00:00",
+  "timestamp": "2020-10-01T20:23:14.939436+00:00",
   "repo": "WICG/webpackage",
   "labels": [
     {
@@ -9312,7 +9312,7 @@
       "labels": [],
       "body": "In #551, @briankanderson and @kuro68k worried that once folks are putting their subresources in bundles, it will be more difficult for browsers or extensions to avoid transferring a subset of those resources in order to save time or money. For example, browsers' \"disable images\" and \"disable javascript\" options should be able to block just those kinds of subresources without preventing the enabled kinds of subresources from loading. It sounds like there are also kinds of resources beyond \"all scripts\" that folks on satellite links want to block, although \"ads\" is adequately covered by #551.\r\n\r\nSome of @yoavweiss' ideas around having the browser express which resources are already cached, and having the server adaptively generate a subset of the bundle, could be helpful here, but\r\n1. We have to make sure the default is good even for servers that can't dynamically subset bundles, and\r\n2. I think we need more information than just the list of resource URLs. Maybe we also provide the `preload` `as` value?",
       "createdAt": "2020-09-01T04:22:54Z",
-      "updatedAt": "2020-09-01T13:48:29Z",
+      "updatedAt": "2020-09-22T01:25:42Z",
       "closedAt": null,
       "comments": [
         {
@@ -9356,6 +9356,48 @@
           "body": "> > @KenjiBaheux uBlock Origin supports blocking all resources over X bytes.\r\n> \r\n> I'm curious how they do that technically. The browser is not aware of the size of the resources it is about to download until they are downloaded, and in many cases (e.g. resources without content length) exceeding said quota.\r\n> \r\n> Otherwise, it seems rather unsafe to apply that to no-cors fetched cross-origin resources, as that can reveal information about the user's state. See [my talk](https://youtu.be/xVtli3mmBc4?t=1092) about this for more details.\r\n\r\nAccording to the [documentation ](https://github.com/gorhill/uBlock/wiki/Per-site-switches#no-large-media-elements)it does contact the server to fetch the size of the object, it just then doesn't download it if it exceeds the threshold.",
           "createdAt": "2020-09-01T13:48:29Z",
           "updatedAt": "2020-09-01T13:48:29Z"
+        },
+        {
+          "author": "jjdelc",
+          "authorAssociation": "NONE",
+          "body": "Serving an all or nothing bundle of a site would break many of important HTML bw saving features, for example\r\n\r\n* How does this play at all with the `img` tag's `loading=lazy` attribute?\r\n* In the case of responsive images, which one should be downloaded? or all of them?\r\n* What about file format support? The `<video>` tag that could provide multiple format sources depending on the browser's support, mp4, webm, av1\r\n* How does this affect browser caching for resources between pages. All bundles need to ship all its deps everytime, rendering etags, expire headers useless and all those smarts useless.\r\n* On top of the client's bandwidth, this seems to also increase the server's bandwidth if resources need to be uploaded on every page that the client requests? `article_a.html`, `article_b.html`",
+          "createdAt": "2020-09-20T05:21:01Z",
+          "updatedAt": "2020-09-20T05:21:01Z"
+        },
+        {
+          "author": "yoavweiss",
+          "authorAssociation": "COLLABORATOR",
+          "body": "A bundle doesn't *have* to include all of the site's resources.\r\n\r\n\r\n\r\n> * How does this play at all with the `img` tag's `loading=lazy` attribute?\r\n\r\nOne can imagine a bundle excluding all out-of-viewport images, or adding them to the end of it, if an offline scenario is likely.\r\n\r\n\r\n> * In the case of responsive images, which one should be downloaded? or all of them?\r\n\r\nOne can imagine Client Hints being used to subset non-required media on the server side.\r\n\r\n\r\n\r\n> * What about file format support? The `<video>` tag that could provide multiple format sources depending on the browser's support, mp4, webm, av1\r\n\r\nContent negotiation (e.g. the `Accept` header) can be used to subset unneeded file formats.\r\n\r\n\r\n> * How does this affect browser caching for resources between pages. All bundles need to ship all its deps everytime, rendering etags, expire headers useless and all those smarts useless.\r\n\r\nSee https://docs.google.com/document/d/11t4Ix2bvF1_ZCV9HKfafGfWu82zbOD7aUhZ_FyDAgmA/edit# for a proposal on that front.\r\n\r\n\r\n\r\n> * On top of the client's bandwidth, this seems to also increase the server's bandwidth if resources need to be uploaded on every page that the client requests? `article_a.html`, `article_b.html`\r\n\r\nI'm not sure I get your point here.",
+          "createdAt": "2020-09-21T06:28:53Z",
+          "updatedAt": "2020-09-21T06:28:53Z"
+        },
+        {
+          "author": "kuro68k",
+          "authorAssociation": "NONE",
+          "body": "Does it seem at all likely that sites will generate a custom bundle for every browser request based on what specific resources that browser would like to receive? And if so will it end up being any better than not using a bundle?\r\n\r\nAs it stands it looks likely that any kind of content filtering system (ad blocker, privacy settings in the browser, disabling auto-play videos, bandwidth saving proxies or disabling large object downloading in browser settings etc.) will require completely disabling the use of bundles.\r\n\r\nFurthermore they break one of the most fundamental concepts of the World Wide Web: that the client is responsible for selecting resources and displaying them as the user desires. It gives control of the user's software, of their network connection, to the server operator which requires a level of trust that many users are unwilling to give, even before considering the cost and bandwidth ramifications.",
+          "createdAt": "2020-09-21T07:52:47Z",
+          "updatedAt": "2020-09-21T07:52:47Z"
+        },
+        {
+          "author": "yoavweiss",
+          "authorAssociation": "COLLABORATOR",
+          "body": "You seem to be assuming that the main and only use of bundles is sending the entire contents of the site with them. I don't think that's an accurate assumption.\r\n",
+          "createdAt": "2020-09-21T07:56:04Z",
+          "updatedAt": "2020-09-21T07:56:04Z"
+        },
+        {
+          "author": "kuro68k",
+          "authorAssociation": "NONE",
+          "body": "No such assumption, but in any case the onus is on those promoting this idea to demonstrate that it won't cause these kinds of issues and so far nobody has proposed a solution that allows for the current level of fine-grained control that browsers have.",
+          "createdAt": "2020-09-21T08:14:34Z",
+          "updatedAt": "2020-09-21T08:14:34Z"
+        },
+        {
+          "author": "jjdelc",
+          "authorAssociation": "NONE",
+          "body": "> I'm not sure I get your point here.\r\n\r\nFor the server's case, if they need to serve the bundle for say all articles, they would need to serve the same CSS/JS/Imgs files every time when the browser can have them cached. Increasing server's bandwidth consumption.\r\n\r\nI read the GDoc linked, it looks like a lot of dynamic machinery is needed to generate on the fly bundles according to each of the cached states the client could be in. It starts to look a lot like a more complex version of HTTP2 with pipelining. \r\n\r\nBy having the bundles being dynamic it sounds like the idea of being able to have a neat bundle weakens, would this be a HTTP server plugin? ",
+          "createdAt": "2020-09-22T01:25:41Z",
+          "updatedAt": "2020-09-22T01:25:41Z"
         }
       ]
     },
@@ -9499,6 +9541,40 @@
           "updatedAt": "2020-09-11T11:49:10Z"
         }
       ]
+    },
+    {
+      "number": 599,
+      "id": "MDU6SXNzdWU3MDMwMjE4NjQ=",
+      "title": "Site might phish a site that archives it",
+      "url": "https://github.com/WICG/webpackage/issues/599",
+      "state": "OPEN",
+      "author": "jyasskin",
+      "authorAssociation": "MEMBER",
+      "assignees": [],
+      "labels": [],
+      "body": "I've been designing as if we could have a page like https://web.archive.org/web/20200914192731/https://www.example.com/ serve a web bundle that it doesn't do a lot of work to vet because it winds up executing in a suborigin. However, @wycats pointed out that that could allow https://web.archive.org/web/20200914192731/https://attack.web.archive.evil.example/ to show a login form for https://web.archive.org, and because [the browser would emphasize the serving origin](https://github.com/wicg/webpackage/blob/master/explainers/bundle-urls-and-origins.md#rendering-the-url-bar), it would probably fool the user. See also some discussion on #560.\r\n\r\nA couple thoughts:\r\n* This is still better than the current situation, where an unvalidated archived site can just exfiltrate login cookies.\r\n* Some discussion in #576 suggests a way to mark a bundle as having no network access, which might prevent it from using any credentials it manages to phish. Is that sufficient?\r\n* This probably isn't a worry for bundles accessed as `file:`s?",
+      "createdAt": "2020-09-16T19:35:12Z",
+      "updatedAt": "2020-09-16T19:35:12Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 600,
+      "id": "MDU6SXNzdWU3MDY1OTcxNTY=",
+      "title": "Updating a SXG via validity-url forces content negotiation on servers",
+      "url": "https://github.com/WICG/webpackage/issues/600",
+      "state": "OPEN",
+      "author": "quasicomputational",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [
+        "needs spec"
+      ],
+      "body": "Section 3.6, 'Updating Signature Validity', says:\r\n\r\n> If the the update map is present, that indicates that a new version of the signed exchange is available at its effective request URI (Section 5.5 of [RFC7230]) and can give an estimate of the size of the updated exchange (update.size). If the signed exchange is currently the most recent version, the update SHOULD NOT be present.\r\n\r\nConsider a set-up where `main.html` is the actual resource of interest, and `main.html.sxg` is a signed exchange containing `main.html` (and hence `main.html.sxg` has an effective request URI of `main.html`). `main.html` can have a Link header pointing to `main.html.sxg` with `rel=alternate` and `type=application/signed-exchange` to allow clients to discover the signed exchange. Each of the representations is addressable and there's no need for content negotiation, which is often a big simplification in operation.\r\n\r\nHowever, if the server operator wants to use the `update` field of the validity URL's resource to signal that clients can download a new version of the signed exchange, the spec's current text forces that to be made available at `main.html`. This would force the server into content negotiation because `main.html` is now a name for both the direct representation *and* the signed exchange.\r\n\r\nIf, alternatively, the spec said to try re-downloading the signed exchange from wherever it was originally found, using content-addressing for the SXG would fail: they'll just download the old version again or run into a 410.\r\n\r\nI think that the spec would be better if it just dropped the 'at its effective request URI', and let clients look for the new SXG however they want to: the best thing would be to use the same mechanism to discover the updated SXG as they used to discover the SXG originally, but they could try content negotiation at the effective request URI if they think it's a good idea or if it's the best option they have (e.g., if the SXG wasn't discovered and actively pulled, but rather pushed to them out of band). It might be worth having a SHOULD here noting the pitfalls.",
+      "createdAt": "2020-09-22T18:22:13Z",
+      "updatedAt": "2020-09-23T23:48:35Z",
+      "closedAt": null,
+      "comments": []
     }
   ],
   "pulls": [
@@ -50308,6 +50384,91 @@
           "createdAt": "2020-09-11T00:15:57Z",
           "updatedAt": "2020-09-11T00:15:57Z",
           "comments": []
+        }
+      ]
+    },
+    {
+      "number": 601,
+      "id": "MDExOlB1bGxSZXF1ZXN0NDk1OTEyOTU5",
+      "title": "Prefer \"resources\"-based approach",
+      "url": "https://github.com/WICG/webpackage/pull/601",
+      "state": "OPEN",
+      "author": "hayatoito",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Update the subresource loading explainer. The two major functional\r\nchanges are:\r\n\r\n- Prefer a \"resources\"-based approach to a \"scope\"-based approach.\r\n  A \"scope\"-based approach is now under the alternative design\r\n  section.\r\n- Subresources are only loaded from the bundle if either:\r\n  - a subresource's origin is the same origin as the bundle's origin, or\r\n  - a subresource's URL is urn:uuid URL.\r\n\r\nAlso update the other parts accordingly, such as updating examples.",
+      "createdAt": "2020-10-01T02:55:41Z",
+      "updatedAt": "2020-10-01T17:26:35Z",
+      "baseRepository": "WICG/webpackage",
+      "baseRefName": "master",
+      "baseRefOid": "ec0871e80e7822434841df8a3c048fe9e8af999b",
+      "headRepository": "hayatoito/webpackage",
+      "headRefName": "prefer-resources",
+      "headRefOid": "4b8db57d009452c83f15f26dcd24828405233015",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [
+        {
+          "author": "hayatoito",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "@jyasskin @yoavweiss \r\nCould you review the PR?\r\nI've updated the explainer, as a preparation for an origin trial.",
+          "createdAt": "2020-10-01T03:04:05Z",
+          "updatedAt": "2020-10-01T03:04:05Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NTAwNTQ1NTky",
+          "commit": {
+            "abbreviatedOid": "4b8db57"
+          },
+          "author": "jyasskin",
+          "authorAssociation": "MEMBER",
+          "state": "APPROVED",
+          "body": "Looks good after several changes below. Thanks!",
+          "createdAt": "2020-10-01T16:58:37Z",
+          "updatedAt": "2020-10-01T17:26:35Z",
+          "comments": [
+            {
+              "originalPosition": 101,
+              "body": "Indent these so they appear inside step 4, since they're commentary on that step.",
+              "createdAt": "2020-10-01T16:58:37Z",
+              "updatedAt": "2020-10-01T17:26:35Z"
+            },
+            {
+              "originalPosition": 68,
+              "body": "```suggestion\r\n   - a subresource's origin is the [same origin](https://html.spec.whatwg.org/#same-origin)\r\n     as the bundle's origin and its [path](https://url.spec.whatwg.org/#concept-url-path) contains the bundle's path as a prefix, or\r\n```",
+              "createdAt": "2020-10-01T17:11:40Z",
+              "updatedAt": "2020-10-01T17:26:35Z"
+            },
+            {
+              "originalPosition": 69,
+              "body": "We should say something about whether the the bundle subresources are entered into the HTTP cache. I think it's moderately important that we not put the `urn:uuid` resources into the cache, to prevent it from being a problem if a site re-uses those UUIDs. The origin+path restriction makes it fairly safe to cache the `https:` subresources, but we also don't want to be causing extra IPCs to fetch those from the cache. This interacts with the \"Subsequent loading and Caching\" section and might belong there.\r\n\r\nA note about this would also make a good start for a security considerations section.",
+              "createdAt": "2020-10-01T17:13:58Z",
+              "updatedAt": "2020-10-01T17:26:35Z"
+            },
+            {
+              "originalPosition": 126,
+              "body": "We wouldn't write `\\`s in the HTML source:\r\n```suggestion\r\n  resources=\"https://example.com/dir/a.js\r\n             https://example.com/dir/b.js\r\n             https://example.com/dir/c.png\r\n```",
+              "createdAt": "2020-10-01T17:16:55Z",
+              "updatedAt": "2020-10-01T17:26:35Z"
+            },
+            {
+              "originalPosition": 69,
+              "body": "```suggestion\r\n   - a subresource's URL is a [`urn:uuid:`](https://tools.ietf.org/html/rfc4122) URL.\r\n```",
+              "createdAt": "2020-10-01T17:24:21Z",
+              "updatedAt": "2020-10-01T17:26:35Z"
+            },
+            {
+              "originalPosition": 187,
+              "body": "```suggestion\r\n### Summarizing the contents of the bundle\r\n\r\nSeveral other mechanisms are available to give the bundler more flexibility or to compress the resource list.\r\n```\r\n\r\nAnd then keep the subsections about this nested with `####`.",
+              "createdAt": "2020-10-01T17:24:47Z",
+              "updatedAt": "2020-10-01T17:26:35Z"
+            }
+          ]
         }
       ]
     }
