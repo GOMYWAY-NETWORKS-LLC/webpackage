@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2020-10-01T20:23:14.939436+00:00",
+  "timestamp": "2020-10-06T00:07:49.632107+00:00",
   "repo": "WICG/webpackage",
   "labels": [
     {
@@ -50392,31 +50392,61 @@
       "id": "MDExOlB1bGxSZXF1ZXN0NDk1OTEyOTU5",
       "title": "Prefer \"resources\"-based approach",
       "url": "https://github.com/WICG/webpackage/pull/601",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "hayatoito",
-      "authorAssociation": "CONTRIBUTOR",
+      "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Update the subresource loading explainer. The two major functional\r\nchanges are:\r\n\r\n- Prefer a \"resources\"-based approach to a \"scope\"-based approach.\r\n  A \"scope\"-based approach is now under the alternative design\r\n  section.\r\n- Subresources are only loaded from the bundle if either:\r\n  - a subresource's origin is the same origin as the bundle's origin, or\r\n  - a subresource's URL is urn:uuid URL.\r\n\r\nAlso update the other parts accordingly, such as updating examples.",
       "createdAt": "2020-10-01T02:55:41Z",
-      "updatedAt": "2020-10-01T17:26:35Z",
+      "updatedAt": "2020-10-06T00:07:22Z",
       "baseRepository": "WICG/webpackage",
       "baseRefName": "master",
       "baseRefOid": "ec0871e80e7822434841df8a3c048fe9e8af999b",
       "headRepository": "hayatoito/webpackage",
       "headRefName": "prefer-resources",
-      "headRefOid": "4b8db57d009452c83f15f26dcd24828405233015",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "0dac16659a06af065ea7f35a53202ac7575b3d35",
+      "closedAt": "2020-10-06T00:06:05Z",
+      "mergedAt": "2020-10-06T00:06:05Z",
+      "mergedBy": "hayatoito",
+      "mergeCommit": {
+        "oid": "44c3437db2d89af300b655f0d3efca52410a2ff3"
+      },
       "comments": [
         {
           "author": "hayatoito",
-          "authorAssociation": "CONTRIBUTOR",
+          "authorAssociation": "COLLABORATOR",
           "body": "@jyasskin @yoavweiss \r\nCould you review the PR?\r\nI've updated the explainer, as a preparation for an origin trial.",
           "createdAt": "2020-10-01T03:04:05Z",
           "updatedAt": "2020-10-01T03:04:05Z"
+        },
+        {
+          "author": "hayatoito",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@jyasskin  Thanks for the review!\r\n\r\nI've applied the suggestions, and updated the PR.\r\nRegarding a security consideration section, let me try to make another PR.",
+          "createdAt": "2020-10-02T03:55:13Z",
+          "updatedAt": "2020-10-02T03:55:51Z"
+        },
+        {
+          "author": "hayatoito",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@jyasskin \r\nCould you merge the PR if it is okay?\r\n",
+          "createdAt": "2020-10-05T23:49:05Z",
+          "updatedAt": "2020-10-05T23:49:05Z"
+        },
+        {
+          "author": "hayatoito",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I became a member of this repository, so let me merge this! Thanks!",
+          "createdAt": "2020-10-06T00:05:47Z",
+          "updatedAt": "2020-10-06T00:05:47Z"
+        },
+        {
+          "author": "jyasskin",
+          "authorAssociation": "MEMBER",
+          "body": "Yep, I hadn't realized you didn't yet have write access.",
+          "createdAt": "2020-10-06T00:07:22Z",
+          "updatedAt": "2020-10-06T00:07:22Z"
         }
       ],
       "reviews": [
@@ -50436,37 +50466,157 @@
               "originalPosition": 101,
               "body": "Indent these so they appear inside step 4, since they're commentary on that step.",
               "createdAt": "2020-10-01T16:58:37Z",
-              "updatedAt": "2020-10-01T17:26:35Z"
+              "updatedAt": "2020-10-02T03:53:02Z"
             },
             {
               "originalPosition": 68,
               "body": "```suggestion\r\n   - a subresource's origin is the [same origin](https://html.spec.whatwg.org/#same-origin)\r\n     as the bundle's origin and its [path](https://url.spec.whatwg.org/#concept-url-path) contains the bundle's path as a prefix, or\r\n```",
               "createdAt": "2020-10-01T17:11:40Z",
-              "updatedAt": "2020-10-01T17:26:35Z"
+              "updatedAt": "2020-10-02T03:53:02Z"
             },
             {
               "originalPosition": 69,
               "body": "We should say something about whether the the bundle subresources are entered into the HTTP cache. I think it's moderately important that we not put the `urn:uuid` resources into the cache, to prevent it from being a problem if a site re-uses those UUIDs. The origin+path restriction makes it fairly safe to cache the `https:` subresources, but we also don't want to be causing extra IPCs to fetch those from the cache. This interacts with the \"Subsequent loading and Caching\" section and might belong there.\r\n\r\nA note about this would also make a good start for a security considerations section.",
               "createdAt": "2020-10-01T17:13:58Z",
-              "updatedAt": "2020-10-01T17:26:35Z"
+              "updatedAt": "2020-10-02T03:53:02Z"
             },
             {
               "originalPosition": 126,
               "body": "We wouldn't write `\\`s in the HTML source:\r\n```suggestion\r\n  resources=\"https://example.com/dir/a.js\r\n             https://example.com/dir/b.js\r\n             https://example.com/dir/c.png\r\n```",
               "createdAt": "2020-10-01T17:16:55Z",
-              "updatedAt": "2020-10-01T17:26:35Z"
+              "updatedAt": "2020-10-02T03:53:02Z"
             },
             {
               "originalPosition": 69,
               "body": "```suggestion\r\n   - a subresource's URL is a [`urn:uuid:`](https://tools.ietf.org/html/rfc4122) URL.\r\n```",
               "createdAt": "2020-10-01T17:24:21Z",
-              "updatedAt": "2020-10-01T17:26:35Z"
+              "updatedAt": "2020-10-02T03:53:02Z"
             },
             {
               "originalPosition": 187,
               "body": "```suggestion\r\n### Summarizing the contents of the bundle\r\n\r\nSeveral other mechanisms are available to give the bundler more flexibility or to compress the resource list.\r\n```\r\n\r\nAnd then keep the subsections about this nested with `####`.",
               "createdAt": "2020-10-01T17:24:47Z",
-              "updatedAt": "2020-10-01T17:26:35Z"
+              "updatedAt": "2020-10-02T03:53:02Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NTAwODQ1NjAy",
+          "commit": {
+            "abbreviatedOid": "4b8db57"
+          },
+          "author": "hayatoito",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2020-10-02T03:44:14Z",
+          "updatedAt": "2020-10-02T03:44:15Z",
+          "comments": [
+            {
+              "originalPosition": 101,
+              "body": "Thanks. Done.",
+              "createdAt": "2020-10-02T03:44:15Z",
+              "updatedAt": "2020-10-02T03:53:02Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NTAwODQ1NzEz",
+          "commit": {
+            "abbreviatedOid": "4b8db57"
+          },
+          "author": "hayatoito",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2020-10-02T03:44:44Z",
+          "updatedAt": "2020-10-02T03:44:44Z",
+          "comments": [
+            {
+              "originalPosition": 68,
+              "body": "Thanks. Merged the change to the PR.",
+              "createdAt": "2020-10-02T03:44:44Z",
+              "updatedAt": "2020-10-02T03:53:02Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NTAwODQ2MzU0",
+          "commit": {
+            "abbreviatedOid": "4b8db57"
+          },
+          "author": "hayatoito",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2020-10-02T03:47:46Z",
+          "updatedAt": "2020-10-02T03:47:46Z",
+          "comments": [
+            {
+              "originalPosition": 69,
+              "body": "Thanks! Yes, it is a good idea to have a security consideration section in this explainer.\r\nLet me try to add a security consideration section as another PR.",
+              "createdAt": "2020-10-02T03:47:46Z",
+              "updatedAt": "2020-10-02T03:53:02Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NTAwODQ2Mzk1",
+          "commit": {
+            "abbreviatedOid": "4b8db57"
+          },
+          "author": "hayatoito",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2020-10-02T03:48:00Z",
+          "updatedAt": "2020-10-02T03:48:00Z",
+          "comments": [
+            {
+              "originalPosition": 126,
+              "body": "Done.",
+              "createdAt": "2020-10-02T03:48:00Z",
+              "updatedAt": "2020-10-02T03:53:02Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NTAwODQ2NDM1",
+          "commit": {
+            "abbreviatedOid": "4b8db57"
+          },
+          "author": "hayatoito",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2020-10-02T03:48:13Z",
+          "updatedAt": "2020-10-02T03:48:13Z",
+          "comments": [
+            {
+              "originalPosition": 69,
+              "body": "Done.",
+              "createdAt": "2020-10-02T03:48:13Z",
+              "updatedAt": "2020-10-02T03:53:02Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NTAwODQ2NjI2",
+          "commit": {
+            "abbreviatedOid": "4b8db57"
+          },
+          "author": "hayatoito",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2020-10-02T03:49:06Z",
+          "updatedAt": "2020-10-02T03:49:07Z",
+          "comments": [
+            {
+              "originalPosition": 187,
+              "body": "Done! Thanks!",
+              "createdAt": "2020-10-02T03:49:07Z",
+              "updatedAt": "2020-10-02T03:53:02Z"
             }
           ]
         }
